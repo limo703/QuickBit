@@ -1,0 +1,67 @@
+package quickbit.core.model;
+
+import org.springframework.hateoas.RepresentationModel;
+
+public class UserModel extends RepresentationModel<UserModel> {
+
+    private String username;
+    private String firstName;
+    private String lastName;
+    private ValetModel valet;
+    private String uuid;
+    private String avatar;
+
+    public String getUsername() {
+        return username;
+    }
+
+    public UserModel setUsername(String username) {
+        this.username = username;
+        return this;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public UserModel setFirstName(String firstName) {
+        this.firstName = firstName;
+        return this;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public UserModel setLastName(String lastName) {
+        this.lastName = lastName;
+        return this;
+    }
+
+    public ValetModel getValet() {
+        return valet;
+    }
+
+    public UserModel setValet(ValetModel valet) {
+        this.valet = valet;
+        return this;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public UserModel setUuid(String uuid) {
+        this.uuid = uuid;
+        return this;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public UserModel setAvatar(String avatar) {
+        this.avatar = avatar;
+        return this;
+    }
+}

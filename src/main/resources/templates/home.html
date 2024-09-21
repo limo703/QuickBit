@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Домашняя страница</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="home-button-container">
+    <a href="/home" class="home-button">На главную</a>
+</div>
+
+
+<div class="home-container">
+    <div class="profile-header">
+        <div class="avatar">
+            <a th:href="@{/user/{username}(username=${authUser.username})}">
+                <img th:src="@{/image/{uuid}(uuid=${authUser.avatar})}" width="100" height="100" alt="Аватар">
+            </a>
+        </div>
+        <div class="user-info">
+            <h1 th:text="${authUser.firstName != null ? authUser.firstName : ''} + ' ' + ${authUser.lastName != null ? authUser.lastName : ''}">
+                Имя Фамилия</h1>
+            <p th:text="'@' + ${authUser.username}">@username</p>
+        </div>
+    </div>
+
+    <div class="valet-info">
+        <h2>Баланс</h2>
+        <a th:href="@{/user/{username}/valet/deposit(username=${authUser.username})}" class="plain-link">
+            <p th:text="'Счёт: ' + ${authUser.valet.score} + ' ' + ${authUser.valet.currency.name}">Счёт: 0 Валюта</p>
+        </a>
+    </div>
+</div>
+</body>
+</html>
