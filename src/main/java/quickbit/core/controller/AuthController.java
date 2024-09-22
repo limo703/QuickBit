@@ -4,7 +4,7 @@ import quickbit.core.form.CreateUserForm;
 import quickbit.core.model.AuthUser;
 import quickbit.core.service.UserService;
 import quickbit.core.validator.CreateUserFormValidator;
-import quickbit.util.RedirectUtil;
+import quickbit.core.util.RedirectUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;

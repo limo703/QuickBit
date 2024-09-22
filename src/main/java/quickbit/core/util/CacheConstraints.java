@@ -1,4 +1,4 @@
-package quickbit.util;
+package quickbit.core.util;
 
 
 public class CacheConstraints {

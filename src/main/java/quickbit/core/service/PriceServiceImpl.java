@@ -14,17 +14,16 @@ import quickbit.dbcore.entity.Currency;
 import quickbit.dbcore.entity.CurrencyPrice;
 import quickbit.dbcore.entity.CurrencyType;
 import quickbit.dbcore.repositories.CurrencyPriceRepository;
-import quickbit.util.HttpUtil;
+import quickbit.core.util.HttpUtil;
 
-import java.math.BigDecimal;
 import java.net.URISyntaxException;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static quickbit.core.util.ProviderConstraints.CURRENCY_PROVIDER_BASE_URL;
+import static quickbit.core.util.ProviderConstraints.LATEST_CURRENCY_RATE_URL;
 
 @Service
 public class PriceServiceImpl implements PriceService {
@@ -32,7 +31,6 @@ public class PriceServiceImpl implements PriceService {
     private final OkHttpClient client;
     private final CurrencyPriceRepository currencyPriceRepository;
     private final String apiKey;
-    private final String marketUrl = "https://pro-api.coinmarketcap.com";
 
 
     @Autowired
@@ -59,7 +57,7 @@ public class PriceServiceImpl implements PriceService {
                     .setPrice(
                         currencyInfo
                             .getQuote()
-                            .get("2781")
+                            .get(CurrencyType.USD.getDescription())
                             .getPrice()
                     )
                     .setCurrency(type)
@@ -68,36 +66,19 @@ public class PriceServiceImpl implements PriceService {
         currencyPriceRepository.saveAll(newCurrencies);
     }
 
-    private Map<CurrencyType, BigDecimal> processingRequest(
-        @NotNull Map<String, Object> response
-    ) {
-        Map<CurrencyType, BigDecimal> updatedCurrencies = new HashMap<>();
-        Map<String, Object> data = (Map<String, Object>) response.get("data");
-        for (Map.Entry<String, Object> entry : data.entrySet()) {
-            Map<String, Object> currencyInfo = (Map<String, Object>) entry.getValue();
-            Map<String, Object> quote = (Map<String, Object>) currencyInfo.get("quote");
-            Map<String, Object> quoteInfo = (Map<String, Object>) quote.get("USD");
-            BigDecimal price = (BigDecimal) quoteInfo.get("price");
-
-            CurrencyType currency = CurrencyType.valueOf(currencyInfo.get("symbol").toString());
-            updatedCurrencies.put(currency, price);
-        }
-        return updatedCurrencies;
-    }
-
     private PriceResponseDataModel sendRequestForUpdate(@NotNull List<Currency> currencies) {
         Set<String> currencyNames = currencies
             .stream()
             .map(
-                currency -> CurrencyType.getDescription(currency.getName())
+                currency -> currency.getName().getDescription()
             )
             .collect(Collectors.toSet());
 
         String responseJson = null;
         try {
-            URIBuilder query = new URIBuilder(marketUrl + "/v1/cryptocurrency/quotes/latest");
+            URIBuilder query = new URIBuilder(CURRENCY_PROVIDER_BASE_URL + LATEST_CURRENCY_RATE_URL);
             query.addParameter("slug", String.join(",", currencyNames));
-            query.addParameter("convert_id", "2781");
+            query.addParameter("convert_id", CurrencyType.USD.getDescription());
 
             Request request = new Request.Builder()
                 .addHeader(HttpHeaders.ACCEPT, "application/json")

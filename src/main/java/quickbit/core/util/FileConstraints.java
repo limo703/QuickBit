@@ -1,4 +1,4 @@
-package quickbit.util;
+package quickbit.core.util;
 
 
 import com.sun.istack.NotNull;

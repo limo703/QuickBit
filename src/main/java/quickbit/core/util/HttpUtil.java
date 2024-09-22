@@ -1,4 +1,4 @@
-package quickbit.util;
+package quickbit.core.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

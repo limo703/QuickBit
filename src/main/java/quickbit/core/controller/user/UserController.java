@@ -9,7 +9,7 @@ import quickbit.core.service.ImageService;
 import quickbit.core.service.UserService;
 import quickbit.core.service.ValetService;
 import quickbit.core.validator.DepositUserFormValidator;
-import quickbit.util.RedirectUtil;
+import quickbit.core.util.RedirectUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

@@ -5,6 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.math.BigDecimal;
 import java.util.Map;
 
+/**
+ * Модель в которую парсим приходящий json c информацией о монете
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PriceResponseDataModel {
     private Map<String, CurrencyInfo> data;
@@ -33,7 +36,7 @@ public class PriceResponseDataModel {
         private int cmc_rank;
         private String last_updated;
         private String[] tags;
-        private Object platform; // Можем оставить как Object, если поле platform приходит null
+        private Object platform;
         private BigDecimal self_reported_circulating_supply;
         private BigDecimal self_reported_market_cap;
         private Map<String, Quote> quote;

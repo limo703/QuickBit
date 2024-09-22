@@ -1,4 +1,4 @@
-package quickbit.util;
+package quickbit.core.util;
 
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;

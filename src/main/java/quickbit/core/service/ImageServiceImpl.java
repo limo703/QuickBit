@@ -14,7 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import quickbit.util.FileConstraints;
+import quickbit.core.util.FileConstraints;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityNotFoundException;

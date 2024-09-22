@@ -8,24 +8,39 @@ public enum CurrencyType {
     USD,
     EUR,
     RUB,
-    BTC;
+    BTC,
+    ETH,
+    DOGE,
+    TON,
+    PEPE,
+    BNB,
+    SOL;
 
     private static final Map<CurrencyType, String> DESCRIPTIONS = new HashMap<>();
     private static final Set<CurrencyType> CRYPTO_CURRENCIES;
 
     static {
-        DESCRIPTIONS.put(BTC, "bitcoin");;
+        DESCRIPTIONS.put(USD, "2781");
+        DESCRIPTIONS.put(EUR, "2790");
+        DESCRIPTIONS.put(RUB, "2806");
+        DESCRIPTIONS.put(BTC, "bitcoin");
+        DESCRIPTIONS.put(ETH, "ethereum");
+        DESCRIPTIONS.put(DOGE, "dogecoin");
+        DESCRIPTIONS.put(TON, "toncoin");
+        DESCRIPTIONS.put(PEPE, "pepe");
+        DESCRIPTIONS.put(BNB, "bnb");
+        DESCRIPTIONS.put(SOL, "solana");
     }
 
     static {
-        CRYPTO_CURRENCIES = Set.of(BTC);
+        CRYPTO_CURRENCIES = Set.of(BTC, ETH, DOGE, TON, PEPE, SOL, BNB);
     }
 
     public static Set<CurrencyType> getCryptoCurrencies() {
         return CRYPTO_CURRENCIES;
     }
 
-    public static String getDescription(CurrencyType currency) {
-        return DESCRIPTIONS.get(currency);
+    public String getDescription() {
+        return DESCRIPTIONS.get(this);
     }
 }

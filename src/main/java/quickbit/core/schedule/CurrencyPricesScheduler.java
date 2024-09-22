@@ -10,6 +10,9 @@ import quickbit.dbcore.entity.CurrencyType;
 
 import java.util.List;
 
+/**
+ * Обновляет цену криптовалюты относительно USD раз в 3 минуты
+ */
 @Component
 public class CurrencyPricesScheduler {
 
@@ -25,7 +28,7 @@ public class CurrencyPricesScheduler {
         this.priceService = priceService;
     }
 
-    @Scheduled(fixedDelay = 5 * 60 * 1000)
+    @Scheduled(fixedDelay = 3 * 60 * 1000)
     public void scheduled() {
         List<Currency> currencies = currencyService.findAll();
 

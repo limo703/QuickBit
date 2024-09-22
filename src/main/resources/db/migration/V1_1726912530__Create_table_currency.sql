@@ -20,4 +20,10 @@ insert into currency (name)
 values ('RUB'),
        ('USD'),
        ('EUR'),
-       ('BTC');
+       ('BTC'),
+       ('ETH'),
+       ('DOGE'),
+       ('TON'),
+       ('PEPE'),
+       ('BNB'),
+       ('SOL');
