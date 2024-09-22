@@ -15,8 +15,8 @@
   <div class="form-container">
     <form action="#" th:action="@{/payment/top-up}" method="post">
       <div class="form-group">
-        <label for="currency">Выберите валюту:</label>
-        <select id="currency" name="currency" required>
+        <label for="currencyType">Выберите валюту:</label>
+        <select id="currencyType" name="currencyType" required>
           <option value="USD" th:selected="${authUser.valet.currency.name == 'USD'}">USD</option>
           <option value="EUR" th:selected="${authUser.valet.currency.name == 'EUR'}">EUR</option>
           <option value="RUB" th:selected="${authUser.valet.currency.name == 'RUB'}">RUB</option>

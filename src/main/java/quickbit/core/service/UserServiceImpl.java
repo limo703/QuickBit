@@ -2,7 +2,7 @@ package quickbit.core.service;
 
 import quickbit.core.form.CreateUserForm;
 import quickbit.core.form.EditUserForm;
-import quickbit.dbcore.entity.Currency;
+import quickbit.dbcore.entity.CurrencyType;
 import quickbit.dbcore.entity.Image;
 import quickbit.dbcore.entity.User;
 import quickbit.dbcore.entity.Valet;
@@ -97,7 +97,7 @@ public class UserServiceImpl implements UserService {
         Valet valet = new Valet();
         valet
             .setScore(0L)
-            .setCurrency(Currency.USD)
+            .setCurrency(CurrencyType.USD)
             .setUser(user);
 
         valet = valetService.save(valet);

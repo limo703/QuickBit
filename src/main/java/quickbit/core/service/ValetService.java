@@ -1,5 +1,7 @@
 package quickbit.core.service;
 
+import quickbit.core.form.DepositUserForm;
+import quickbit.dbcore.entity.User;
 import quickbit.dbcore.entity.Valet;
 import com.sun.istack.NotNull;
 
@@ -10,4 +12,9 @@ public interface ValetService {
 
     @NotNull
     Valet getById(Long valetId);
+
+    Valet deposit(
+        @NotNull DepositUserForm form,
+        @NotNull User user
+    );
 }

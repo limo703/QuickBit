@@ -14,7 +14,7 @@ public class Valet extends UuidTimedEntity {
 
     private Long score;
 
-    private Currency currency;
+    private CurrencyType currency;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -32,12 +32,12 @@ public class Valet extends UuidTimedEntity {
         return this;
     }
 
-    public Currency getCurrency() {
+    public CurrencyType getCurrency() {
         return currency;
     }
 
-    public Valet setCurrency(Currency currency) {
-        this.currency = currency;
+    public Valet setCurrency(CurrencyType currencyType) {
+        this.currency = currencyType;
         return this;
     }
 

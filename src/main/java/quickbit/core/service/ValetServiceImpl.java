@@ -1,6 +1,8 @@
 package quickbit.core.service;
 
 import quickbit.core.exception.ValetNotFoundException;
+import quickbit.core.form.DepositUserForm;
+import quickbit.dbcore.entity.User;
 import quickbit.dbcore.entity.Valet;
 import quickbit.dbcore.repositories.ValetRepository;
 import com.sun.istack.NotNull;
@@ -35,13 +37,13 @@ public class ValetServiceImpl implements ValetService {
             .orElseThrow(ValetNotFoundException::new);
     }
 
-//    @Override
-//    public Valet deposit(
-//        @NotNull DepositUserForm form,
-//        @NotNull User user
-//    ) {
-//        Valet valet = getById(user.getValetId());
-//
-//
-//    }
+    @Override
+    public Valet deposit(
+        @NotNull DepositUserForm form,
+        @NotNull User user
+    ) {
+        Valet valet = getById(user.getValetId());
+
+        return valet;
+    }
 }

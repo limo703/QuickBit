@@ -4,7 +4,6 @@ import quickbit.core.exception.FileNotFoundException;
 import quickbit.dbcore.entity.Image;
 import quickbit.dbcore.entity.User;
 import quickbit.dbcore.repositories.ImageRepository;
-import quickbit.util.FileConstrants;
 import com.sun.istack.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import quickbit.util.FileConstraints;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityNotFoundException;
@@ -69,7 +69,7 @@ public class ImageServiceImpl implements ImageService {
         String fileName;
         Path filePath;
         try {
-            fileName = FileConstrants.generateFileName(user.getUuid());
+            fileName = FileConstraints.generateFileName(user.getUuid());
             filePath = Paths.get(imagePath, fileName);
 
             Files.write(filePath, file.getBytes());

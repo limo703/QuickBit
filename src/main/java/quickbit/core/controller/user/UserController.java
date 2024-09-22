@@ -7,6 +7,7 @@ import quickbit.core.model.UserModel;
 import quickbit.core.model.assembler.UserModelAssembler;
 import quickbit.core.service.ImageService;
 import quickbit.core.service.UserService;
+import quickbit.core.service.ValetService;
 import quickbit.core.validator.DepositUserFormValidator;
 import quickbit.util.RedirectUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,18 +32,20 @@ public class UserController {
     private final UserService userService;
     private final ImageService imageService;
     private final UserModelAssembler assembler;
+    private final ValetService valetService;
     private final DepositUserFormValidator depositUserFormValidator;
 
     @Autowired
     public UserController(
         UserService userService,
         ImageService imageService,
-        UserModelAssembler assembler,
+        UserModelAssembler assembler, ValetService valetService,
         DepositUserFormValidator depositUserFormValidator
     ) {
         this.userService = userService;
         this.imageService = imageService;
         this.assembler = assembler;
+        this.valetService = valetService;
         this.depositUserFormValidator = depositUserFormValidator;
     }
 
@@ -112,14 +115,16 @@ public class UserController {
             .addObject("authUser", assembler.toModel(authUser.getUser()));
     }
 
-//    @PostMapping("valet/deposit")
-//    @PreAuthorize("@permissionService.isAccess(#authUser, #userModel)")
-//    public ModelAndView depositUser(
-//        UserModel userModel,
-//        @Validated @ModelAttribute("depositUserForm")
-//        DepositUserForm depositUserForm,
-//        @AuthenticationPrincipal AuthUser authUser
-//    ) {
-//
-//    }
+    @PostMapping("valet/deposit")
+    @PreAuthorize("@permissionService.isAccess(#authUser, #userModel)")
+    public ModelAndView depositUser(
+        UserModel userModel,
+        @Validated @ModelAttribute("depositUserForm")
+        DepositUserForm depositUserForm,
+        @AuthenticationPrincipal AuthUser authUser
+    ) {
+
+
+        return RedirectUtil.redirect("/home");
+    }
 }
