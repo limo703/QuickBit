@@ -8,6 +8,7 @@ import quickbit.core.service.PriceService;
 import quickbit.dbcore.entity.Currency;
 import quickbit.dbcore.entity.CurrencyType;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 /**
@@ -28,15 +29,22 @@ public class CurrencyPricesScheduler {
         this.priceService = priceService;
     }
 
+    @Transactional
     @Scheduled(fixedDelay = 3 * 60 * 1000)
     public void scheduled() {
         List<Currency> currencies = currencyService.findAll();
 
-        currencies = currencies
+        List<Currency> criptoCurrencies = currencies
             .stream()
             .filter(currency -> CurrencyType.getCryptoCurrencies().contains(currency.getName()))
             .toList();
 
-        priceService.updatePrice(currencies);
+        List<Currency> fiatCurrencies = currencies
+            .stream()
+            .filter(currency -> !CurrencyType.getCryptoCurrencies().contains(currency.getName()))
+            .toList();
+
+        priceService.refreshCurrencyPrices(criptoCurrencies);
+        priceService.updateFiatCurrency(fiatCurrencies);
     }
 }

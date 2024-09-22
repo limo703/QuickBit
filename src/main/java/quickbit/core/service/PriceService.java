@@ -7,5 +7,7 @@ import java.util.List;
 
 public interface PriceService {
 
-    void updatePrice(@NotNull List<Currency> currencies);
+    void updateFiatCurrency(List<Currency> currencies);
+
+    void refreshCurrencyPrices(@NotNull List<Currency> currencies);
 }

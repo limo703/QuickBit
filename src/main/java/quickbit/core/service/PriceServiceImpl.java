@@ -9,19 +9,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
+import quickbit.core.model.FiatCurrencyDataModel;
 import quickbit.core.model.PriceResponseDataModel;
+import quickbit.core.util.HttpUtil;
 import quickbit.dbcore.entity.Currency;
 import quickbit.dbcore.entity.CurrencyPrice;
 import quickbit.dbcore.entity.CurrencyType;
 import quickbit.dbcore.repositories.CurrencyPriceRepository;
-import quickbit.core.util.HttpUtil;
 
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static quickbit.core.util.ProviderConstraints.CBR_FIAT_CURRENCY_URL;
 import static quickbit.core.util.ProviderConstraints.CURRENCY_PROVIDER_BASE_URL;
 import static quickbit.core.util.ProviderConstraints.LATEST_CURRENCY_RATE_URL;
 
@@ -44,11 +47,15 @@ public class PriceServiceImpl implements PriceService {
     }
 
     @Override
-    public void updatePrice(
-        @NotNull List<Currency> currencies
-    ) {
-        PriceResponseDataModel responseModel = sendRequestForUpdate(currencies);
+    public void updateFiatCurrency(@NotNull List<Currency> currencies) {
+        FiatCurrencyDataModel dataModel = retrieveFiatCurrencyRates();
 
+        List<Currency> currencies;
+    }
+
+    @Override
+    public void refreshCurrencyPrices(@NotNull List<Currency> currencies) {
+        PriceResponseDataModel responseModel = retrieveCurrencyRates(currencies);
         Set<CurrencyPrice> newCurrencies = new HashSet<>();
         for (PriceResponseDataModel.CurrencyInfo currencyInfo : responseModel.getData().values()) {
             CurrencyType type = CurrencyType.valueOf(currencyInfo.getSymbol());
@@ -66,7 +73,7 @@ public class PriceServiceImpl implements PriceService {
         currencyPriceRepository.saveAll(newCurrencies);
     }
 
-    private PriceResponseDataModel sendRequestForUpdate(@NotNull List<Currency> currencies) {
+    private PriceResponseDataModel retrieveCurrencyRates(@NotNull List<Currency> currencies) {
         Set<String> currencyNames = currencies
             .stream()
             .map(
@@ -90,10 +97,28 @@ public class PriceServiceImpl implements PriceService {
             if (response.isSuccessful()) {
                 responseJson = response.body().string();
             }
-
         } catch (URISyntaxException | java.io.IOException e) {
             throw new RuntimeException(e);
         }
-        return HttpUtil.parseJsonToModel(responseJson);
+        return HttpUtil.parseJsonToModel(responseJson, PriceResponseDataModel.class);
+    }
+
+    private FiatCurrencyDataModel retrieveFiatCurrencyRates() {
+        String responseJson = null;
+        try {
+            URI uri = new URIBuilder(CBR_FIAT_CURRENCY_URL).build();
+
+            Request request = new Request.Builder()
+                .url(uri.toString())
+                .build();
+
+            Response response = client.newCall(request).execute();
+            if (response.isSuccessful()) {
+                responseJson = response.body().string();
+            }
+        } catch (URISyntaxException | java.io.IOException e) {
+            throw new RuntimeException(e);
+        }
+        return HttpUtil.parseJsonToModel(responseJson, FiatCurrencyDataModel.class);
     }
 }
