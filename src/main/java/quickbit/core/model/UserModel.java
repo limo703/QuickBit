@@ -9,7 +9,7 @@ public class UserModel extends RepresentationModel<UserModel> {
     private String lastName;
     private ValetModel valet;
     private String uuid;
-    private String avatar;
+    private String avatarUuid;
 
     public String getUsername() {
         return username;
@@ -57,11 +57,20 @@ public class UserModel extends RepresentationModel<UserModel> {
     }
 
     public String getAvatar() {
-        return avatar;
+        return avatarUuid;
     }
 
     public UserModel setAvatar(String avatar) {
-        this.avatar = avatar;
+        this.avatarUuid = avatar;
+        return this;
+    }
+
+    public String getAvatarUuid() {
+        return avatarUuid;
+    }
+
+    public UserModel setAvatarUuid(String avatarUuid) {
+        this.avatarUuid = avatarUuid;
         return this;
     }
 }

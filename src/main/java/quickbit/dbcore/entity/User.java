@@ -1,5 +1,6 @@
 package quickbit.dbcore.entity;
 
+import quickbit.core.util.UserRole;
 import quickbit.dbcore.entity.base.UuidTimedEntity;
 
 import javax.persistence.CascadeType;

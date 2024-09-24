@@ -2,13 +2,12 @@ package quickbit.core.service;
 
 import quickbit.core.form.CreateUserForm;
 import quickbit.core.form.EditUserForm;
-import quickbit.dbcore.entity.CurrencyType;
 import quickbit.dbcore.entity.Image;
 import quickbit.dbcore.entity.User;
 import quickbit.dbcore.entity.Valet;
 import quickbit.dbcore.repositories.UserRepository;
 import quickbit.core.exception.UserNotFoundException;
-import quickbit.dbcore.entity.UserRole;
+import quickbit.core.util.UserRole;
 import com.sun.istack.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -27,18 +26,21 @@ public class UserServiceImpl implements UserService {
     private final UserRepository repository;
     private final ValetService valetService;
     private final ImageService imageService;
+    private final CurrencyService currencyService;
 
     @Autowired
     public UserServiceImpl(
         UserRepository repository,
         PasswordEncoder passwordEncoder,
         ValetService valetService,
-        ImageService imageService
+        ImageService imageService,
+        CurrencyService currencyService
     ) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
         this.valetService = valetService;
         this.imageService = imageService;
+        this.currencyService = currencyService;
     }
 
     @NotNull
@@ -95,9 +97,10 @@ public class UserServiceImpl implements UserService {
         User user = repository.save(newUser);
 
         Valet valet = new Valet();
+
         valet
             .setScore(0L)
-            .setCurrency(CurrencyType.USD)
+            .setCurrency(currencyService.getDefault())
             .setUser(user);
 
         valet = valetService.save(valet);

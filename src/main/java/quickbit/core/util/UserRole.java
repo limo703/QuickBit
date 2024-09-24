@@ -1,4 +1,4 @@
-package quickbit.dbcore.entity;
+package quickbit.core.util;
 
 public enum UserRole {
     GUEST,

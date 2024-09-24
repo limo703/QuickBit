@@ -1,11 +1,11 @@
 package quickbit.core.form;
 
-import quickbit.dbcore.entity.CurrencyType;
+import quickbit.dbcore.entity.Currency;
 
 public class DepositUserForm {
 
     private Double score;
-    private CurrencyType currencyType;
+    private String currencyName;
 
     public Double getScore() {
         return score;
@@ -16,12 +16,12 @@ public class DepositUserForm {
         return this;
     }
 
-    public CurrencyType getCurrency() {
-        return currencyType;
+    public String getCurrencyName() {
+        return currencyName;
     }
 
-    public DepositUserForm setCurrency(CurrencyType currencyType) {
-        this.currencyType = currencyType;
+    public DepositUserForm setCurrencyName(String currencyName) {
+        this.currencyName = currencyName;
         return this;
     }
 }

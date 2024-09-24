@@ -7,16 +7,19 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
 @Entity
 public class Valet extends UuidTimedEntity {
 
     private Long score;
-
-    private CurrencyType currency;
-
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Column(name = "currency_id")
+    private Long currencyId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "currecy_id")
+    private Currency currency;
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -29,15 +32,6 @@ public class Valet extends UuidTimedEntity {
 
     public Valet setScore(Long score) {
         this.score = score;
-        return this;
-    }
-
-    public CurrencyType getCurrency() {
-        return currency;
-    }
-
-    public Valet setCurrency(CurrencyType currencyType) {
-        this.currency = currencyType;
         return this;
     }
 
@@ -56,6 +50,24 @@ public class Valet extends UuidTimedEntity {
 
     public Valet setUserId(Long userId) {
         this.userId = userId;
+        return this;
+    }
+
+    public Long getCurrencyId() {
+        return currencyId;
+    }
+
+    public Valet setCurrencyId(Long currencyId) {
+        this.currencyId = currencyId;
+        return this;
+    }
+
+    public Currency getCurrency() {
+        return currency;
+    }
+
+    public Valet setCurrency(Currency currency) {
+        this.currency = currency;
         return this;
     }
 }

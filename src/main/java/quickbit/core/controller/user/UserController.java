@@ -67,21 +67,6 @@ public class UserController {
             .addObject("isCurrentUser", isCurrentUser);
     }
 
-    @GetMapping("edit")
-    @PreAuthorize("@permissionService.isAccess(#authUser, #userModel)")
-    public ModelAndView getEditUserPage(
-        UserModel userModel,
-        @AuthenticationPrincipal AuthUser authUser
-    ) {
-        return new ModelAndView("user/edit")
-            .addObject("userModel", userModel)
-            .addObject("editUserForm",
-                new EditUserForm()
-                    .setLastName(userModel.getLastName())
-                    .setFirstName(userModel.getFirstName())
-            );
-    }
-
     @PostMapping("update-avatar")
     @PreAuthorize("@permissionService.isAccess(#authUser, #userModel)")
     public ModelAndView updateAvatar(

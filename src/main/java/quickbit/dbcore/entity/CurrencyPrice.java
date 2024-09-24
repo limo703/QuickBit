@@ -19,8 +19,13 @@ import java.time.LocalDateTime;
 @Entity
 public class CurrencyPrice extends BaseEntity {
 
-    @Enumerated(EnumType.STRING)
-    private CurrencyType currency;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "currency_id")
+    private Currency currency;
+
+    @Column(name = "currency_id", insertable = false, updatable = false)
+    private Long currencyId;
+
     private BigDecimal price;
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -28,15 +33,6 @@ public class CurrencyPrice extends BaseEntity {
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
-    }
-
-    public CurrencyType getCurrency() {
-        return currency;
-    }
-
-    public CurrencyPrice setCurrency(CurrencyType currency) {
-        this.currency = currency;
-        return this;
     }
 
     public BigDecimal getPrice() {
@@ -54,6 +50,24 @@ public class CurrencyPrice extends BaseEntity {
 
     public CurrencyPrice setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+        return this;
+    }
+
+    public Long getCurrencyId() {
+        return currencyId;
+    }
+
+    public CurrencyPrice setCurrencyId(Long currencyId) {
+        this.currencyId = currencyId;
+        return this;
+    }
+
+    public Currency getCurrency() {
+        return currency;
+    }
+
+    public CurrencyPrice setCurrency(Currency currency) {
+        this.currency = currency;
         return this;
     }
 }

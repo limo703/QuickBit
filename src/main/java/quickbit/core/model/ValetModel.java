@@ -1,13 +1,11 @@
 package quickbit.core.model;
 
-import quickbit.dbcore.entity.CurrencyType;
 import org.springframework.hateoas.RepresentationModel;
 
 public class ValetModel extends RepresentationModel<ValetModel> {
 
     private Long score;
-
-    private CurrencyType currencyType;
+    private String currencyName;
 
     public Long getScore() {
         return score;
@@ -18,12 +16,12 @@ public class ValetModel extends RepresentationModel<ValetModel> {
         return this;
     }
 
-    public CurrencyType getCurrency() {
-        return currencyType;
+    public String getCurrencyName() {
+        return currencyName;
     }
 
-    public ValetModel setCurrency(CurrencyType currencyType) {
-        this.currencyType = currencyType;
+    public ValetModel setCurrencyName(String currencyName) {
+        this.currencyName = currencyName;
         return this;
     }
 }
