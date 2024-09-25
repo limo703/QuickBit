@@ -7,7 +7,7 @@ create table users
     first_name      varchar,
     last_name       varchar,
     role            varchar   not null,
-    valet_id        integer,
+    wallet_id        integer,
     avatar_image_id integer,
 
     created_at      TIMESTAMP NOT NULL DEFAULT current_timestamp,
