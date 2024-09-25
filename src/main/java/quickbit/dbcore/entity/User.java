@@ -8,8 +8,11 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -25,12 +28,14 @@ public class User extends UuidTimedEntity {
     @Column(name = "avatar_image_id")
     private Long avatarId;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "valet_id", updatable = false, insertable = false)
-    private Wallet wallet;
+    @OneToMany(
+        fetch = FetchType.LAZY,
+        mappedBy = "user"
+    )
+    private Set<Wallet> wallet = new HashSet<>();
 
-    @Column(name = "valet_id")
-    private Long valetId;
+    @Column(name = "wallet_id")
+    private Long walletId;
 
     public String getEmail() {
         return email;
@@ -86,15 +91,6 @@ public class User extends UuidTimedEntity {
         return this;
     }
 
-    public Wallet getValet() {
-        return wallet;
-    }
-
-    public User setValet(Wallet wallet) {
-        this.wallet = wallet;
-        return this;
-    }
-
     public Long getAvatarId() {
         return avatarId;
     }
@@ -104,12 +100,21 @@ public class User extends UuidTimedEntity {
         return this;
     }
 
-    public Long getValetId() {
-        return valetId;
+    public Long getWalletId() {
+        return walletId;
     }
 
-    public User setValetId(Long valetId) {
-        this.valetId = valetId;
+    public User setWalletId(Long walletId) {
+        this.walletId = walletId;
+        return this;
+    }
+
+    public Set<Wallet> getWallet() {
+        return wallet;
+    }
+
+    public User setWallet(Set<Wallet> wallet) {
+        this.wallet = wallet;
         return this;
     }
 }

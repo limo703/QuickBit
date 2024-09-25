@@ -1,4 +1,4 @@
-package quickbit.configuration;
+package quickbit.core.configuration;
 
 import org.postgresql.ds.PGSimpleDataSource;
 import org.springframework.beans.factory.annotation.Value;

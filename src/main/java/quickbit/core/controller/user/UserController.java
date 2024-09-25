@@ -55,7 +55,7 @@ public class UserController {
     }
 
     @GetMapping
-    @PreAuthorize("@permissionService.isAccess(#authUser)")
+    @PreAuthorize("@permissionService.check(#authUser)")
     public ModelAndView getUserPage(
         UserModel userModel,
         @AuthenticationPrincipal AuthUser authUser
@@ -68,7 +68,7 @@ public class UserController {
     }
 
     @PostMapping("update-avatar")
-    @PreAuthorize("@permissionService.isAccess(#authUser, #userModel)")
+    @PreAuthorize("@permissionService.check(#authUser, #userModel)")
     public ModelAndView updateAvatar(
         UserModel userModel,
         @RequestParam("file") MultipartFile file,
@@ -79,7 +79,7 @@ public class UserController {
     }
 
     @PostMapping("edit")
-    @PreAuthorize("@permissionService.isAccess(#authUser, #userModel)")
+    @PreAuthorize("@permissionService.check(#authUser, #userModel)")
     public ModelAndView editUser(
         UserModel userModel,
         @Validated @ModelAttribute("editUserForm")
@@ -91,7 +91,7 @@ public class UserController {
     }
 
     @GetMapping("valet/deposit")
-    @PreAuthorize("@permissionService.isAccess(#authUser, #userModel)")
+    @PreAuthorize("@permissionService.check(#authUser, #userModel)")
     public ModelAndView depositUserPage(
         UserModel userModel,
         @AuthenticationPrincipal AuthUser authUser
@@ -101,7 +101,7 @@ public class UserController {
     }
 
     @PostMapping("valet/deposit")
-    @PreAuthorize("@permissionService.isAccess(#authUser, #userModel)")
+    @PreAuthorize("@permissionService.check(#authUser, #userModel)")
     public ModelAndView depositUser(
         UserModel userModel,
         @Validated @ModelAttribute("depositUserForm")

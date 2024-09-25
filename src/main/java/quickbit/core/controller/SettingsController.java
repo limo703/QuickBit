@@ -34,7 +34,7 @@ public class SettingsController {
     }
 
     @GetMapping("profile/edit")
-    @PreAuthorize("@permissionService.isAccess(#authUser)")
+    @PreAuthorize("@permissionService.check(#authUser)")
     public ModelAndView getEditUserPage(
         @AuthenticationPrincipal AuthUser authUser
     ) {

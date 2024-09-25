@@ -10,12 +10,12 @@ import java.util.Objects;
 @Service("permissionService")
 public class PermissionService {
 
-    public boolean isAccess(AuthUser authUser) {
+    public boolean check(AuthUser authUser) {
         return Objects.nonNull(authUser);
     }
 
-    public boolean isAccess(AuthUser authUser, UserModel userModel) {
-        return isAccess(authUser) && Objects.equals(authUser.getUsername(), userModel.getUsername());
+    public boolean check(AuthUser authUser, UserModel userModel) {
+        return check(authUser) && Objects.equals(authUser.getUsername(), userModel.getUsername());
     }
 
 }

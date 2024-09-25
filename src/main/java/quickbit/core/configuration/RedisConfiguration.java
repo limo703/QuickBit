@@ -1,4 +1,4 @@
-package quickbit.configuration;
+package quickbit.core.configuration;
 
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;

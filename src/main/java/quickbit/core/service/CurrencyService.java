@@ -14,7 +14,7 @@ public interface CurrencyService {
 
     Currency getByName(@NotNull String currencyName);
 
-    Optional<Currency> findByName(String currencyName);
+    Optional<Currency> findByName(@NotNull String currencyName);
 
     List<Currency> findAll();
 
@@ -26,7 +26,7 @@ public interface CurrencyService {
 
     Currency getById(long id);
 
-    void saveAllPrice(Iterable<CurrencyPrice> currencies);
+    void saveAllPrice(@NotNull Iterable<CurrencyPrice> currencies);
 
     BigDecimal getLastPrice(@NotNull Long currencyId);
 

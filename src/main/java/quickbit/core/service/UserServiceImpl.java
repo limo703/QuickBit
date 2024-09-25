@@ -105,7 +105,7 @@ public class UserServiceImpl implements UserService {
             .setUser(user);
 
         wallet = walletService.save(wallet);
-        user.setValetId(wallet.getId());
+        user.setWalletId(wallet.getId());
 
         Image image = imageService.generateAndSaveAvatar(newUser);
         user.setAvatarId(image.getId());

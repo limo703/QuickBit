@@ -1,7 +1,5 @@
 package quickbit.dbcore.entity;
 
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.data.redis.core.TimeToLive;
 import quickbit.dbcore.entity.base.BaseEntity;
 
 import javax.persistence.Column;

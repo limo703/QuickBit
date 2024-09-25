@@ -27,7 +27,7 @@ public class HomeController {
     }
 
     @GetMapping()
-    @PreAuthorize("@permissionService.isAccess(#authUser)")
+    @PreAuthorize("@permissionService.check(#authUser)")
     public ModelAndView home(
         @AuthenticationPrincipal AuthUser authUser
         ) {

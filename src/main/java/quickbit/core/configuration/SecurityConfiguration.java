@@ -1,4 +1,4 @@
-package quickbit.configuration;
+package quickbit.core.configuration;
 
 import quickbit.core.service.security.AuthUserService;
 import org.springframework.beans.factory.annotation.Autowired;

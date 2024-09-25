@@ -19,7 +19,7 @@ public class Wallet extends UuidTimedEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "currecy_id")
     private Currency currency;
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 

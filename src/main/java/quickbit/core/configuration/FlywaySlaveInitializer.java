@@ -1,4 +1,4 @@
-package quickbit.configuration;
+package quickbit.core.configuration;
 
 import quickbit.core.model.SchemaLocation;
 import org.flywaydb.core.Flyway;
