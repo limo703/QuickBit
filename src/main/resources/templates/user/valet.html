@@ -17,9 +17,9 @@
       <div class="form-group">
         <label for="currencyType">Выберите валюту:</label>
         <select id="currencyType" name="currencyType" required>
-          <option value="USD" th:selected="${authUser.valet.currency.name == 'USD'}">USD</option>
-          <option value="EUR" th:selected="${authUser.valet.currency.name == 'EUR'}">EUR</option>
-          <option value="RUB" th:selected="${authUser.valet.currency.name == 'RUB'}">RUB</option>
+          <option value="USD" th:selected="${authUser.wallet.currency.name == 'USD'}">USD</option>
+          <option value="EUR" th:selected="${authUser.wallet.currency.name == 'EUR'}">EUR</option>
+          <option value="RUB" th:selected="${authUser.wallet.currency.name == 'RUB'}">RUB</option>
         </select>
       </div>
 
@@ -34,7 +34,7 @@
 
   <div class="current-balance">
     <h2>Текущий баланс</h2>
-    <p th:text="'Счёт: ' + ${authUser.valet.score} + ' ' + ${authUser.valet.currency.name}">Счёт: 0 Валюта</p>
+    <p th:text="'Счёт: ' + ${authUser.wallet.score} + ' ' + ${authUser.wallet.currency.name}">Счёт: 0 Валюта</p>
   </div>
 </div>
 </body>

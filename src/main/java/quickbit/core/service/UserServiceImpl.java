@@ -4,7 +4,7 @@ import quickbit.core.form.CreateUserForm;
 import quickbit.core.form.EditUserForm;
 import quickbit.dbcore.entity.Image;
 import quickbit.dbcore.entity.User;
-import quickbit.dbcore.entity.Valet;
+import quickbit.dbcore.entity.Wallet;
 import quickbit.dbcore.repositories.UserRepository;
 import quickbit.core.exception.UserNotFoundException;
 import quickbit.core.util.UserRole;
@@ -24,7 +24,7 @@ public class UserServiceImpl implements UserService {
 
     private final PasswordEncoder passwordEncoder;
     private final UserRepository repository;
-    private final ValetService valetService;
+    private final WalletService walletService;
     private final ImageService imageService;
     private final CurrencyService currencyService;
 
@@ -32,13 +32,13 @@ public class UserServiceImpl implements UserService {
     public UserServiceImpl(
         UserRepository repository,
         PasswordEncoder passwordEncoder,
-        ValetService valetService,
+        WalletService walletService,
         ImageService imageService,
         CurrencyService currencyService
     ) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
-        this.valetService = valetService;
+        this.walletService = walletService;
         this.imageService = imageService;
         this.currencyService = currencyService;
     }
@@ -96,15 +96,15 @@ public class UserServiceImpl implements UserService {
             );
         User user = repository.save(newUser);
 
-        Valet valet = new Valet();
+        Wallet wallet = new Wallet();
 
-        valet
+        wallet
             .setScore(0L)
             .setCurrency(currencyService.getDefault())
             .setUser(user);
 
-        valet = valetService.save(valet);
-        user.setValetId(valet.getId());
+        wallet = walletService.save(wallet);
+        user.setValetId(wallet.getId());
 
         Image image = imageService.generateAndSaveAvatar(newUser);
         user.setAvatarId(image.getId());

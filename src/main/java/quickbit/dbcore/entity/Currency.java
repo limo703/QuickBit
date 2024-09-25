@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -69,5 +70,21 @@ public class Currency extends BaseEntity {
     public Currency setFiat(boolean fiat) {
         isFiat = fiat;
         return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Currency currency = (Currency) o;
+        return
+            isFiat == currency.isFiat
+            && Objects.equals(name, currency.name)
+            && Objects.equals(description, currency.description);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, description, isFiat);
     }
 }

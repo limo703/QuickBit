@@ -2,15 +2,15 @@ package quickbit.core.model.assembler;
 
 import com.sun.istack.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import quickbit.core.model.ValetModel;
+import quickbit.core.model.WalletModel;
 import quickbit.core.service.CurrencyService;
 import quickbit.dbcore.entity.Currency;
-import quickbit.dbcore.entity.Valet;
+import quickbit.dbcore.entity.Wallet;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ValetModelAssembler implements RepresentationModelAssembler<Valet, ValetModel> {
+public class ValetModelAssembler implements RepresentationModelAssembler<Wallet, WalletModel> {
 
     private final CurrencyService currencyService;
 
@@ -21,15 +21,15 @@ public class ValetModelAssembler implements RepresentationModelAssembler<Valet, 
 
     @NotNull
     @Override
-    public ValetModel toModel(@NotNull Valet entity) {
-        ValetModel valetModel = new ValetModel();
+    public WalletModel toModel(@NotNull Wallet entity) {
+        WalletModel walletModel = new WalletModel();
 
         Currency currency = currencyService.getById(entity.getCurrencyId());
 
-        valetModel
+        walletModel
             .setCurrencyName(currency.getName())
-            .setScore(entity.getScore());
+            .setScore(entity.getScore().doubleValue());
 
-        return valetModel;
+        return walletModel;
     }
 }

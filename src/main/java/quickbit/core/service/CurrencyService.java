@@ -4,6 +4,7 @@ import com.sun.istack.NotNull;
 import quickbit.dbcore.entity.Currency;
 import quickbit.dbcore.entity.CurrencyPrice;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,6 +27,8 @@ public interface CurrencyService {
     Currency getById(long id);
 
     void saveAllPrice(Iterable<CurrencyPrice> currencies);
+
+    BigDecimal getLastPrice(@NotNull Long currencyId);
 
     void updateNotFiatCurrency();
 

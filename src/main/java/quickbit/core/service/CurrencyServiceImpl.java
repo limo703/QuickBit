@@ -7,7 +7,6 @@ import com.sun.istack.NotNull;
 import org.apache.http.client.utils.URIBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import quickbit.core.model.FiatCurrencyDataModel;
@@ -25,11 +24,11 @@ import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static quickbit.core.util.CacheConstraints.CURRENCY_PRICE_KEY_VALUE;
 import static quickbit.core.util.ProviderConstraints.CURRENCY_PROVIDER_BASE_URL;
 import static quickbit.core.util.ProviderConstraints.FIAT_CURRENCY_PROVIDER_BASE_URL;
 import static quickbit.core.util.ProviderConstraints.FIAT_LATEST_CURRENCY_RATE_URL;
@@ -113,6 +112,18 @@ public class CurrencyServiceImpl implements CurrencyService {
         prices.forEach(
             price -> currencyPriceCacheService.save(price.getCurrencyId(), price.getPrice())
         );
+    }
+
+    @Override
+    public BigDecimal getLastPrice(Long currencyId) {
+        BigDecimal bigDecimal = currencyPriceCacheService.get(currencyId);
+        if (Objects.nonNull(bigDecimal)) {
+            return bigDecimal;
+        }
+        CurrencyPrice price = currencyPriceRepository.findTopByCurrencyId(currencyId)
+            .orElseThrow(EntityNotFoundException::new);
+
+        return price.getPrice();
     }
 
     @Override

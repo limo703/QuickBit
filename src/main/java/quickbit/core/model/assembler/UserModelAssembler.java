@@ -2,10 +2,10 @@ package quickbit.core.model.assembler;
 
 import quickbit.core.model.UserModel;
 import quickbit.core.service.ImageService;
-import quickbit.core.service.ValetService;
+import quickbit.core.service.WalletService;
 import quickbit.dbcore.entity.Image;
 import quickbit.dbcore.entity.User;
-import quickbit.dbcore.entity.Valet;
+import quickbit.dbcore.entity.Wallet;
 import com.sun.istack.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,17 +19,17 @@ import java.util.stream.Collectors;
 @Component
 public class UserModelAssembler implements RepresentationModelAssembler<User, UserModel> {
 
-    private final ValetService valetService;
+    private final WalletService walletService;
     private final ValetModelAssembler valetModelAssembler;
     private final ImageService imageService;
 
     @Autowired
     public UserModelAssembler(
-        ValetService valetService,
+        WalletService walletService,
         ValetModelAssembler valetModelAssembler,
         ImageService imageService
     ) {
-        this.valetService = valetService;
+        this.walletService = walletService;
         this.valetModelAssembler = valetModelAssembler;
         this.imageService = imageService;
     }
@@ -39,7 +39,7 @@ public class UserModelAssembler implements RepresentationModelAssembler<User, Us
     public UserModel toModel(@NotNull User entity) {
         UserModel userModel = new UserModel();
 
-        Valet valet = valetService.getByUserId(entity.getId());
+        Wallet wallet = walletService.getByUserId(entity.getId());
 
         Image avatar = imageService.getById(entity.getAvatarId());
 
@@ -50,7 +50,7 @@ public class UserModelAssembler implements RepresentationModelAssembler<User, Us
             .setUuid(entity.getUuid())
             .setAvatar(avatar.getUuid())
             .setValet(
-                valetModelAssembler.toModel(valet)
+                valetModelAssembler.toModel(wallet)
             );
 
         return userModel;

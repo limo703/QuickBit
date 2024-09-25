@@ -27,7 +27,7 @@ public class User extends UuidTimedEntity {
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "valet_id", updatable = false, insertable = false)
-    private Valet valet;
+    private Wallet wallet;
 
     @Column(name = "valet_id")
     private Long valetId;
@@ -86,12 +86,12 @@ public class User extends UuidTimedEntity {
         return this;
     }
 
-    public Valet getValet() {
-        return valet;
+    public Wallet getValet() {
+        return wallet;
     }
 
-    public User setValet(Valet valet) {
-        this.valet = valet;
+    public User setValet(Wallet wallet) {
+        this.wallet = wallet;
         return this;
     }
 

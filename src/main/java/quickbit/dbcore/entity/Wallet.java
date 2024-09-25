@@ -2,18 +2,18 @@ package quickbit.dbcore.entity;
 
 import quickbit.dbcore.entity.base.UuidTimedEntity;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import java.math.BigDecimal;
 
 @Entity
-public class Valet extends UuidTimedEntity {
+public class Wallet extends UuidTimedEntity {
 
-    private Long score;
+    private BigDecimal score;
     @Column(name = "currency_id")
     private Long currencyId;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -26,11 +26,11 @@ public class Valet extends UuidTimedEntity {
     @Column(name = "user_id", insertable = false, updatable = false)
     private Long userId;
 
-    public Long getScore() {
+    public BigDecimal getScore() {
         return score;
     }
 
-    public Valet setScore(Long score) {
+    public Wallet setScore(BigDecimal score) {
         this.score = score;
         return this;
     }
@@ -39,7 +39,7 @@ public class Valet extends UuidTimedEntity {
         return user;
     }
 
-    public Valet setUser(User user) {
+    public Wallet setUser(User user) {
         this.user = user;
         return this;
     }
@@ -48,7 +48,7 @@ public class Valet extends UuidTimedEntity {
         return userId;
     }
 
-    public Valet setUserId(Long userId) {
+    public Wallet setUserId(Long userId) {
         this.userId = userId;
         return this;
     }
@@ -57,7 +57,7 @@ public class Valet extends UuidTimedEntity {
         return currencyId;
     }
 
-    public Valet setCurrencyId(Long currencyId) {
+    public Wallet setCurrencyId(Long currencyId) {
         this.currencyId = currencyId;
         return this;
     }
@@ -66,7 +66,7 @@ public class Valet extends UuidTimedEntity {
         return currency;
     }
 
-    public Valet setCurrency(Currency currency) {
+    public Wallet setCurrency(Currency currency) {
         this.currency = currency;
         return this;
     }

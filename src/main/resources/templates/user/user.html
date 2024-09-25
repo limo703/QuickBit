@@ -22,7 +22,7 @@
         </div>
         <h2 th:text="${userModel.firstName} + ' ' + ${userModel.lastName}" class="user-name">Имя Фамилия</h2>
         <p th:text="'@' + ${userModel.username}" class="username">@username</p>
-        <p th:text="'Баланс: ' + ${userModel.valet.score} + ' ' + ${userModel.valet.currency.name}" class="balance">Баланс: 0 Валюта</p>
+        <p th:text="'Баланс: ' + ${userModel.wallet.score} + ' ' + ${userModel.wallet.currency.name}" class="balance">Баланс: 0 Валюта</p>
     </div>
 
     <div class="button-container">

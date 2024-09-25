@@ -27,10 +27,10 @@
         </div>
     </div>
 
-    <div class="valet-info">
+    <div class="wallet-info">
         <h2>Баланс</h2>
-        <a th:href="@{/user/{username}/valet/deposit(username=${authUser.username})}" class="plain-link">
-            <p th:text="'Счёт: ' + ${authUser.valet.score} + ' ' + ${authUser.valet.currency.name}">Счёт: 0 Валюта</p>
+        <a th:href="@{/user/{username}/wallet/deposit(username=${authUser.username})}" class="plain-link">
+            <p th:text="'Счёт: ' + ${authUser.wallet.score} + ' ' + ${authUser.wallet.currency.name}">Счёт: 0 Валюта</p>
         </a>
     </div>
 </div>

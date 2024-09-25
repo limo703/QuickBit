@@ -41,8 +41,6 @@ public class PriceResponseDataModel {
         private BigDecimal self_reported_market_cap;
         private Map<String, Quote> quote;
 
-        // Геттеры и сеттеры для всех полей
-
         public int getId() {
             return id;
         }
@@ -200,8 +198,6 @@ public class PriceResponseDataModel {
             private BigDecimal market_cap_dominance;
             private BigDecimal fully_diluted_market_cap;
             private String last_updated;
-
-            // Геттеры и сеттеры для всех полей
 
             public BigDecimal getPrice() {
                 return price;

@@ -2,18 +2,19 @@ package quickbit.core.service;
 
 import quickbit.core.form.DepositUserForm;
 import quickbit.dbcore.entity.User;
-import quickbit.dbcore.entity.Valet;
+import quickbit.dbcore.entity.Wallet;
 import com.sun.istack.NotNull;
 
-public interface ValetService {
-    Valet getByUserId(@NotNull Long userId);
+public interface WalletService {
 
-    Valet save(@NotNull Valet valet);
+    Wallet getByUserId(@NotNull Long userId);
+
+    Wallet save(@NotNull Wallet wallet);
 
     @NotNull
-    Valet getById(Long valetId);
+    Wallet getById(Long valetId);
 
-    Valet deposit(
+    Wallet deposit(
         @NotNull DepositUserForm form,
         @NotNull User user
     );

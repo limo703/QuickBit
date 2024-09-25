@@ -2,16 +2,16 @@ package quickbit.core.model;
 
 import org.springframework.hateoas.RepresentationModel;
 
-public class ValetModel extends RepresentationModel<ValetModel> {
+public class WalletModel extends RepresentationModel<WalletModel> {
 
-    private Long score;
+    private Double score;
     private String currencyName;
 
-    public Long getScore() {
+    public Double getScore() {
         return score;
     }
 
-    public ValetModel setScore(Long score) {
+    public WalletModel setScore(Double score) {
         this.score = score;
         return this;
     }
@@ -20,7 +20,7 @@ public class ValetModel extends RepresentationModel<ValetModel> {
         return currencyName;
     }
 
-    public ValetModel setCurrencyName(String currencyName) {
+    public WalletModel setCurrencyName(String currencyName) {
         this.currencyName = currencyName;
         return this;
     }
