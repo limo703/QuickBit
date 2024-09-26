@@ -1,5 +1,7 @@
 package quickbit.core.validator;
 
+import com.sun.istack.NotNull;
+import org.apache.commons.lang3.StringUtils;
 import quickbit.core.form.CreateUserForm;
 import quickbit.core.service.UserService;
 import org.apache.commons.validator.routines.EmailValidator;
@@ -16,14 +18,20 @@ public class CreateUserFormValidator implements Validator {
     private final static String USERNAME_FIELD = "username";
     private final static String PASSWORD_FIELD = "password";
     private final static String EMAIL_FIELD = "email";
-    private final static String REPEATED_PASSWORD_FIELD = "repeatedPassword";
+    private final static String CONFIRM_PASSWORD_FIELD = "confirmPassword";
+    private final static String ERROR_USERNAME_IS_REQUIRED = "error.username.is.required";
+    private final static String ERROR_PASSWORD_IS_REQUIRED = "error.password.is.required";
+    private final static String ERROR_EMAIL_IS_REQUIRED = "error.email.is.required";
+    private final static String ERROR_PASSWORD_DO_NOT_MATCH = "error.password.do.not.match";
+    private final static String ERROR_USERNAME_ALREADY_USE = "error.username.already.use";
+    private final static String ERROR_USERNAME_LENGTH = "error.username.length";
+    private final static String ERROR_EMAIL_FORMAT = "error.username.format";
+    private final static String ERROR_EMAIL_ALREADY_USE = "error.email.already.use";
 
     private final UserService userService;
 
     @Autowired
-    public CreateUserFormValidator(
-        UserService userService
-    ) {
+    public CreateUserFormValidator(UserService userService) {
         this.userService = userService;
     }
 
@@ -33,39 +41,39 @@ public class CreateUserFormValidator implements Validator {
     }
 
     @Override
-    public void validate(Object target, Errors errors) {
+    public void validate(@NotNull Object target, @NotNull Errors errors) {
         CreateUserForm form = (CreateUserForm) target;
 
-        if (Objects.isNull(form.getUsername())) {
-            errors.rejectValue(USERNAME_FIELD,  "Username is required");
+        if (StringUtils.isBlank(form.getUsername())) {
+            errors.rejectValue(USERNAME_FIELD, ERROR_USERNAME_IS_REQUIRED);
         }
 
-        if (Objects.isNull(form.getPassword())) {
-            errors.rejectValue(PASSWORD_FIELD, "Password is required");
+        if (StringUtils.isBlank(form.getPassword())) {
+            errors.rejectValue(PASSWORD_FIELD, ERROR_PASSWORD_IS_REQUIRED);
         }
 
-        if (Objects.isNull(form.getEmail())) {
-            errors.rejectValue(EMAIL_FIELD, "Email is required");
+        if (StringUtils.isBlank(form.getEmail())) {
+            errors.rejectValue(EMAIL_FIELD, ERROR_EMAIL_IS_REQUIRED);
         }
 
         if (!Objects.equals(form.getPassword(), form.getConfirmPassword())) {
-            errors.rejectValue(REPEATED_PASSWORD_FIELD, "Passwords do not match");
+            errors.rejectValue(CONFIRM_PASSWORD_FIELD, ERROR_PASSWORD_DO_NOT_MATCH);
         }
 
         if (Objects.nonNull(userService.getByUsername(form.getUsername()))) {
-            errors.rejectValue(USERNAME_FIELD, "Username is already in use");
+            errors.rejectValue(USERNAME_FIELD, ERROR_USERNAME_ALREADY_USE);
         }
 
         if (form.getUsername().length() > 35) {
-            errors.rejectValue(USERNAME_FIELD, "Username is too long (max = 35 characters)");
+            errors.rejectValue(USERNAME_FIELD, ERROR_USERNAME_LENGTH);
         }
 
         if (!EmailValidator.getInstance().isValid(form.getEmail())) {
-            errors.rejectValue(EMAIL_FIELD, "Invalid email");
+            errors.rejectValue(EMAIL_FIELD, ERROR_EMAIL_FORMAT);
         }
 
         if (Objects.nonNull(userService.getByEmail(form.getEmail()))) {
-            errors.rejectValue(USERNAME_FIELD, "Username is already in use");
+            errors.rejectValue(EMAIL_FIELD, ERROR_EMAIL_ALREADY_USE);
         }
     }
 }

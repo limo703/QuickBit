@@ -7,6 +7,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Optional;
+
 public interface ImageService {
 
     void uploadImage(
@@ -17,6 +19,8 @@ public interface ImageService {
     ResponseEntity<Resource> downloadImage(@NotNull Long imageId);
 
     Image getById(@NotNull Long imageId);
+
+    Optional<Image> findById(@NotNull Long imageId);
 
     Image getByUuid(@NotNull String imageUuid);
 

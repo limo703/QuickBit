@@ -23,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
+import java.util.Optional;
 
 
 @Service
@@ -53,6 +54,11 @@ public class ImageServiceImpl implements ImageService {
     public Image getById(@NotNull Long imageId) {
         return imageRepository.findById(imageId)
             .orElseThrow(EntityNotFoundException::new);
+    }
+
+    @Override
+    public Optional<Image> findById(@NotNull Long imageId) {
+        return imageRepository.findById(imageId);
     }
 
     @Override

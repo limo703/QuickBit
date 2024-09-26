@@ -14,10 +14,10 @@ import java.math.BigDecimal;
 public class Wallet extends UuidTimedEntity {
 
     private BigDecimal score;
-    @Column(name = "currency_id")
+    @Column(name = "currency_id", insertable = false, updatable = false)
     private Long currencyId;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "currecy_id")
+    @JoinColumn(name = "currency_id")
     private Currency currency;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

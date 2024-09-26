@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @ControllerAdvice(
     basePackages = {
-        "com.example.petProject.core.controller.user"
+        "com.example.petProject.core.controller.user",
+        "com.example.petProject.core.controller.api"
     }
 )
 

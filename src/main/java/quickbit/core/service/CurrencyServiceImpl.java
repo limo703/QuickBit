@@ -7,6 +7,8 @@ import com.sun.istack.NotNull;
 import org.apache.http.client.utils.URIBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import quickbit.core.model.FiatCurrencyDataModel;
@@ -101,6 +103,11 @@ public class CurrencyServiceImpl implements CurrencyService {
     }
 
     @Override
+    public Page<Currency> findAllNotFiat(@NotNull Pageable pageable) {
+        return currencyRepository.findAllByIsFiatIsFalse(pageable);
+    }
+
+    @Override
     public Currency getById(long id) {
         return currencyRepository.findById(id)
             .orElseThrow(EntityNotFoundException::new);
@@ -115,7 +122,7 @@ public class CurrencyServiceImpl implements CurrencyService {
     }
 
     @Override
-    public BigDecimal getLastPrice(Long currencyId) {
+    public BigDecimal getLastPrice(@NotNull Long currencyId) {
         BigDecimal bigDecimal = currencyPriceCacheService.get(currencyId);
         if (Objects.nonNull(bigDecimal)) {
             return bigDecimal;
@@ -124,6 +131,12 @@ public class CurrencyServiceImpl implements CurrencyService {
             .orElseThrow(EntityNotFoundException::new);
 
         return price.getPrice();
+    }
+
+    @NotNull
+    @Override
+    public Set<CurrencyPrice> getAllPrices(@NotNull Long currencyId) {
+        return currencyPriceRepository.findAllByCurrencyId(currencyId);
     }
 
     @Override

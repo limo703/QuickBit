@@ -1,5 +1,6 @@
 package quickbit.core.controller;
 
+import org.springframework.validation.BindingResult;
 import quickbit.core.form.CreateUserForm;
 import quickbit.core.model.AuthUser;
 import quickbit.core.service.UserService;
@@ -59,13 +60,19 @@ public class AuthController {
             RedirectUtil.redirect("/home");
         }
 
-        return new ModelAndView("auth/registration");
+        return new ModelAndView("auth/registration")
+            .addObject("createUserForm", new CreateUserForm());
     }
 
     @PostMapping("/registration")
     public ModelAndView registration(
-        @Validated @ModelAttribute("createUserForm") CreateUserForm createUserForm
+        @Validated @ModelAttribute("createUserForm") CreateUserForm createUserForm,
+        BindingResult bindingResult
     ) {
+        if (bindingResult.hasErrors()) {
+            return new ModelAndView("auth/registration");
+        }
+
         userService.create(createUserForm);
 
         return RedirectUtil.redirect("/auth/login");
