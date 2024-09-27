@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+  <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="top-navbar">
+  <a href="/home" class="home-button">Домой</a>
+</div>
+<div class="currency-chart-container">
+  <h3>
+    <a th:href="@{/currency/{name}(name=${currencyModel.name})}" th:text="${currencyModel.name}"></a>
+  </h3>
+  <div class="currency-chart">
+    <canvas th:attr="id='chart-' + ${currencyModel.name}" width="800" height="400"></canvas>
+    <div class="currency-price">
+      <p>Цена: <span th:text="${price}"></span> $</p>
+    </div>
+  </div>
+  <div class="currency-buttons">
+    <button class="currency-button buy" th:text="'Купить ' + ${currencyModel.name}"></button>
+    <button class="currency-button sell" th:text="'Продать ' + ${currencyModel.name}"></button>
+  </div>
+</div>
+
+<script th:inline="javascript">
+  var currency = /*[[${currencyModel}]]*/ {};
+
+  const ctx = document.getElementById('chart-' + currency.name).getContext('2d');
+
+  // Получаем метки времени и данные цен
+  const labels = Object.keys(currency.pricesMap);
+  const data = Object.values(currency.pricesMap);
+
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: `Курс ${currency.name}`,
+        data: data,
+        borderColor: getRandomColor(),
+        borderWidth: 2,
+        fill: false
+      }]
+    },
+    options: {
+      scales: {
+        x: {
+          type: 'time',
+          time: {
+            unit: 'minute',
+            tooltipFormat: 'YYYY-MM-DD HH:mm'
+          }
+        },
+        y: {
+          beginAtZero: false
+        }
+      }
+    }
+  });
+
+  /* Функция для генерации случайного цвета */
+  function getRandomColor() {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  }
+</script>
+</body>
+</html>

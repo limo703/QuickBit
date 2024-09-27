@@ -16,11 +16,15 @@ import quickbit.core.model.AuthUser;
 import quickbit.core.model.CurrencyModel;
 import quickbit.core.model.assembler.CurrencyModelAssembler;
 import quickbit.core.model.assembler.UserModelAssembler;
+import quickbit.core.model.assembler.WalletModelAssembler;
 import quickbit.core.service.CurrencyService;
 import quickbit.core.service.UserService;
+import quickbit.core.service.WalletService;
 import quickbit.dbcore.entity.Currency;
+import quickbit.dbcore.entity.Wallet;
 
 import java.util.List;
+import java.util.Set;
 
 @Controller
 @RequestMapping("/home")
@@ -28,19 +32,25 @@ public class HomeController {
 
     private final UserService userService;
     private final CurrencyService currencyService;
+    private final WalletService walletService;
     private final UserModelAssembler userModelAssembler;
+    private final WalletModelAssembler walletModelAssembler;
     private final CurrencyModelAssembler currencyModelAssembler;
 
     @Autowired
     public HomeController(
         UserService userService,
         CurrencyService currencyService,
+        WalletService walletService,
         UserModelAssembler userModelAssembler,
+        WalletModelAssembler walletModelAssembler,
         CurrencyModelAssembler currencyModelAssembler
     ) {
         this.userService = userService;
         this.currencyService = currencyService;
+        this.walletService = walletService;
         this.userModelAssembler = userModelAssembler;
+        this.walletModelAssembler = walletModelAssembler;
         this.currencyModelAssembler = currencyModelAssembler;
     }
 
@@ -53,8 +63,11 @@ public class HomeController {
         PagedModel<CurrencyModel> criptoCurrencies =
             currencyModelAssembler.toPagedModel(currencyService.findAllNotFiat(pageable));
 
+        Set<Wallet> wallets = walletService.getAllNonDefaultWallets(authUser.getUser().getId());
+
         return new ModelAndView("home")
             .addObject("authUser", userModelAssembler.toModel(authUser.getUser()))
+            .addObject("wallets", walletModelAssembler.toCollectionModel(wallets))
             .addObject("currencyModels", criptoCurrencies);
     }
 }

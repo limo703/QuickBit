@@ -7,13 +7,12 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import java.math.BigDecimal;
 
 @Entity
 public class Wallet extends UuidTimedEntity {
 
-    private BigDecimal score;
+    private BigDecimal amount;
     @Column(name = "currency_id", insertable = false, updatable = false)
     private Long currencyId;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -26,12 +25,14 @@ public class Wallet extends UuidTimedEntity {
     @Column(name = "user_id", insertable = false, updatable = false)
     private Long userId;
 
-    public BigDecimal getScore() {
-        return score;
+    private boolean isDefault;
+
+    public BigDecimal getAmount() {
+        return amount;
     }
 
-    public Wallet setScore(BigDecimal score) {
-        this.score = score;
+    public Wallet setAmount(BigDecimal amount) {
+        this.amount = amount;
         return this;
     }
 
@@ -68,6 +69,20 @@ public class Wallet extends UuidTimedEntity {
 
     public Wallet setCurrency(Currency currency) {
         this.currency = currency;
+        return this;
+    }
+
+    public Wallet add(BigDecimal amount) {
+        this.amount = this.amount.add(amount);
+        return this;
+    }
+
+    public boolean isDefault() {
+        return isDefault;
+    }
+
+    public Wallet setDefault(boolean aDefault) {
+        isDefault = aDefault;
         return this;
     }
 }

@@ -58,7 +58,6 @@ public class UserServiceImpl implements UserService {
         @NotNull Long userId
     ) {
         User user = getById(userId);
-
         user
             .setFirstName(form.getFirstName())
             .setLastName(form.getLastName())
@@ -95,22 +94,22 @@ public class UserServiceImpl implements UserService {
             .setPassword(
                 passwordEncoder.encode(form.getPassword())
             );
-        User user = repository.save(newUser);
+        newUser = repository.save(newUser);
 
         Wallet wallet = new Wallet();
 
         wallet
-            .setScore(BigDecimal.ZERO)
+            .setAmount(BigDecimal.ZERO)
             .setCurrency(currencyService.getDefault())
-            .setUser(user);
+            .setUser(newUser);
 
         wallet = walletService.save(wallet);
-        user.setWalletId(wallet.getId());
+        newUser.setDefaultWalletId(wallet.getId());
 
         Image image = imageService.generateAndSaveAvatar(newUser);
-        user.setAvatarId(image.getId());
+        newUser.setAvatarId(image.getId());
 
-        return user;
+        return newUser;
     }
 
     @Override

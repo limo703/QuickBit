@@ -11,7 +11,7 @@ public class CurrencyModel extends RepresentationModel<CurrencyModel> {
     private String name;
     private String avatar;
     private boolean isFiat;
-    private Map<LocalDateTime, Double> pricesMap = new TreeMap<>();
+    private Map<String, Double> pricesMap = new TreeMap<>();
 
     public String getName() {
         return name;
@@ -40,11 +40,11 @@ public class CurrencyModel extends RepresentationModel<CurrencyModel> {
         return this;
     }
 
-    public Map<LocalDateTime, Double> getPricesMap() {
+    public Map<String, Double> getPricesMap() {
         return pricesMap;
     }
 
-    public CurrencyModel setPricesMap(Map<LocalDateTime, Double> pricesMap) {
+    public CurrencyModel setPricesMap(Map<String, Double> pricesMap) {
         this.pricesMap = pricesMap;
         return this;
     }

@@ -1,6 +1,6 @@
-package quickbit.core.controller.user;
+package quickbit.core.controller;
 
-import quickbit.core.form.DepositUserForm;
+import quickbit.core.form.DepositForm;
 import quickbit.core.form.EditUserForm;
 import quickbit.core.model.AuthUser;
 import quickbit.core.model.UserModel;
@@ -8,7 +8,7 @@ import quickbit.core.model.assembler.UserModelAssembler;
 import quickbit.core.service.ImageService;
 import quickbit.core.service.UserService;
 import quickbit.core.service.WalletService;
-import quickbit.core.validator.DepositUserFormValidator;
+import quickbit.core.validator.DepositFormValidator;
 import quickbit.core.util.RedirectUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -33,25 +33,25 @@ public class UserController {
     private final ImageService imageService;
     private final UserModelAssembler assembler;
     private final WalletService walletService;
-    private final DepositUserFormValidator depositUserFormValidator;
+    private final DepositFormValidator depositFormValidator;
 
     @Autowired
     public UserController(
         UserService userService,
         ImageService imageService,
         UserModelAssembler assembler, WalletService walletService,
-        DepositUserFormValidator depositUserFormValidator
+        DepositFormValidator depositFormValidator
     ) {
         this.userService = userService;
         this.imageService = imageService;
         this.assembler = assembler;
         this.walletService = walletService;
-        this.depositUserFormValidator = depositUserFormValidator;
+        this.depositFormValidator = depositFormValidator;
     }
 
     @InitBinder("depositUserForm")
     public void initBinder(WebDataBinder binder) {
-        binder.addValidators(depositUserFormValidator);
+        binder.addValidators(depositFormValidator);
     }
 
     @GetMapping
@@ -88,28 +88,5 @@ public class UserController {
     ) {
         userService.editUser(editUserForm, authUser.getUser().getId());
         return RedirectUtil.redirect("/user/" + authUser.getUser().getUsername());
-    }
-
-    @GetMapping("valet/deposit")
-    @PreAuthorize("@permissionService.check(#authUser, #userModel)")
-    public ModelAndView depositUserPage(
-        UserModel userModel,
-        @AuthenticationPrincipal AuthUser authUser
-    ) {
-        return new ModelAndView("user/valet")
-            .addObject("authUser", assembler.toModel(authUser.getUser()));
-    }
-
-    @PostMapping("valet/deposit")
-    @PreAuthorize("@permissionService.check(#authUser, #userModel)")
-    public ModelAndView depositUser(
-        UserModel userModel,
-        @Validated @ModelAttribute("depositUserForm")
-        DepositUserForm depositUserForm,
-        @AuthenticationPrincipal AuthUser authUser
-    ) {
-
-
-        return RedirectUtil.redirect("/home");
     }
 }

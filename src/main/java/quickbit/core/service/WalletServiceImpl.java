@@ -3,16 +3,16 @@ package quickbit.core.service;
 import com.sun.istack.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import quickbit.core.exception.ValetNotFoundException;
+import quickbit.core.exception.WalletNotFoundException;
 import quickbit.core.form.CreateTransactionForm;
-import quickbit.core.form.DepositUserForm;
-import quickbit.core.util.QuickBitUtil;
+import quickbit.core.form.DepositForm;
 import quickbit.dbcore.entity.Currency;
 import quickbit.dbcore.entity.Transaction;
 import quickbit.dbcore.entity.User;
 import quickbit.dbcore.entity.Wallet;
 import quickbit.dbcore.repositories.WalletRepository;
 
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -40,12 +40,6 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public Wallet getByUserId(@NotNull Long userId) {
-        return walletRepository.findByUserId(userId)
-            .orElseThrow(ValetNotFoundException::new);
-    }
-
-    @Override
     public Wallet save(@NotNull Wallet wallet) {
         return walletRepository.save(wallet);
     }
@@ -54,47 +48,41 @@ public class WalletServiceImpl implements WalletService {
     @Override
     public Wallet getById(@NotNull Long valetId) {
         return walletRepository.findById(valetId)
-            .orElseThrow(ValetNotFoundException::new);
+            .orElseThrow(WalletNotFoundException::new);
     }
 
     @NotNull
     @Override
     public Wallet getOrCreate(
-        @NotNull Long userId,
-        @NotNull Long currencyId
+        @NotNull User user,
+        @NotNull Currency currency
     ) {
-        Optional<Wallet> optionalWallet = walletRepository.findByUserIdAndCurrencyId(userId, currencyId);
+        Optional<Wallet> optionalWallet =
+            walletRepository.findByUserIdAndCurrencyId(user.getId(), currency.getId());
 
-        return optionalWallet.orElseGet(() -> optionalWallet.orElse(
-            walletRepository.save(new Wallet())
-                .setCurrencyId(currencyId)
-                .setUserId(userId)
+        return optionalWallet.orElseGet(() -> walletRepository.save(
+            new Wallet()
+                .setCurrency(currency)
+                .setUser(user)
+                .setAmount(BigDecimal.ZERO)
         ));
-
     }
 
     @Override
+    @Transactional
     public Wallet deposit(
-        @NotNull DepositUserForm form,
+        @NotNull DepositForm form,
         @NotNull User user
     ) {
-        Wallet wallet = getById(user.getWalletId());
-        BigDecimal score = BigDecimal.valueOf(form.getScore());
+        Currency currency = currencyService.getByName(form.getCurrency());
+        Wallet wallet = getOrCreate(user, currency);
 
-        Currency formCurrency = currencyService.getByName(form.getCurrencyName());
-        Currency waletCurrency = currencyService.getById(wallet.getCurrencyId());
-
-        if (!formCurrency.equals(waletCurrency)) {
-            BigDecimal formRate = currencyService.getLastPrice(formCurrency.getId());
-            BigDecimal walletRate = currencyService.getLastPrice(waletCurrency.getId());
-            score = QuickBitUtil.convert(score, formRate, walletRate);
-        }
-
-        score = wallet.getScore().add(score);
-        return walletRepository.save(wallet.setScore(score));
+        BigDecimal addAmount = BigDecimal.valueOf(form.getAmount());
+        return walletRepository.save(wallet.add(addAmount));
     }
 
     @Override
+    @Transactional
     public Wallet processingTransaction(
         @NotNull CreateTransactionForm form,
         @NotNull User user
@@ -151,13 +139,18 @@ public class WalletServiceImpl implements WalletService {
             );
         }
 
-        Wallet wallet = getOrCreate(user.getId(), purchaseCurrency.getId());
+        Wallet wallet = getOrCreate(user, purchaseCurrency);
 
         wallet
-            .setScore(BigDecimal.valueOf(counter))
+            .setAmount(BigDecimal.valueOf(counter))
             .setCurrency(purchaseCurrency)
             .setUser(user);
 
         return walletRepository.save(wallet);
+    }
+
+    @Override
+    public Set<Wallet> getAllNonDefaultWallets(@NotNull Long userId) {
+        return walletRepository.findAllByUserIdWithoutDefault(userId);
     }
 }

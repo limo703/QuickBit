@@ -13,6 +13,7 @@ import quickbit.dbcore.entity.Currency;
 import quickbit.dbcore.entity.CurrencyPrice;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -37,11 +38,14 @@ public class CurrencyModelAssembler implements RepresentationModelAssembler<Curr
     @Override
     public CurrencyModel toModel(@NotNull Currency entity) {
         Set<CurrencyPrice> currencyPriceSet = currencyService.getAllPrices(entity.getId());
-        Map<LocalDateTime, Double> pricesMap = new TreeMap<>();
+        Map<String, Double> pricesMap = new TreeMap<>();
 
         currencyPriceSet
             .forEach(
-                price -> pricesMap.put(price.getCreatedAt(), price.getPrice().doubleValue())
+                price -> pricesMap.put(
+                    price.getCreatedAt().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
+                    price.getPrice().doubleValue()
+                )
             );
 
         CurrencyModel model = new CurrencyModel();

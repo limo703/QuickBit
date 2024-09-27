@@ -139,6 +139,8 @@ body {
     padding: 10px 20px; /* Внутренние отступы */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Тень для глубины */
     transition: background-color 0.3s; /* Плавный переход цвета при наведении */
+    width: 22%;
+    height: 30%;
 }
 
 .container {
@@ -187,7 +189,7 @@ input[type="text"] {
 button {
     width: 100%; /* Полная ширина */
     padding: 10px;
-    background-color: #007BFF;
+    background-color: #34495e;
     color: white;
     border: none;
     border-radius: 5px;
@@ -232,7 +234,7 @@ h1 {
     width: 120px; /* Увеличенный размер аватарки */
     height: 120px;
     border-radius: 50%;
-    border: 3px solid #007BFF; /* Обводка вокруг аватарки */
+    border: 3px solid #4e6988; /* Обводка вокруг аватарки */
     transition: transform 0.3s; /* Анимация увеличения */
 }
 
@@ -287,10 +289,11 @@ h1 {
     background-color: #28a745; /* Цвет фона кнопки */
     color: white; /* Цвет текста */
     text-align: center;
-    border-radius: 5px;
+    border-radius: 8px;
     text-decoration: none;
     transition: background-color 0.3s;
     margin-right: 40px; /* Отступ справа */
+    position: fixed;
 }
 
 .home-button:hover {
@@ -416,4 +419,228 @@ input[type="number"]::-webkit-inner-spin-button {
     }
 }
 
+.plain-link {
+    text-decoration: none; /* Убирает подчеркивание */
+    color: #34495e;
+    font-weight: bold;
+}
+
+.chart-container {
+    width: 260px; /* Уменьшенная ширина для хорошего отображения текста */
+    height: 180px; /* Высота остается прежней */
+    border: 1px solid #ccc; /* Граница для визуального выделения */
+    padding: 10px; /* Отступы вокруг графика */
+    margin: 10px; /* Отступы между графиками */
+    display: inline-block; /* Отображение в строку */
+    vertical-align: top; /* Вертикальное выравнивание */
+    background-color: #f9f9f9; /* Цвет фона */
+    border-radius: 5px; /* Скругленные углы */
+    box-sizing: border-box; /* Включаем отступы и границы в расчет ширины */
+}
+
+canvas {
+    width: 100%; /* Растягивание графика на всю ширину контейнера */
+    height: auto; /* Соотношение сторон сохраняется */
+}
+
+.charts-container {
+    display: flex; /* Flexbox для графиков */
+    flex-wrap: wrap; /* Обрезка на следующую строку при необходимости */
+    justify-content: flex-start; /* Выравнивание элементов по левому краю */
+    margin: -10px; /* Отрицательные отступы для устранения лишнего пространства */
+}
+
+.chart-item {
+    width: calc(33% - 20px); /* Ширина каждого графика с учетом уменьшения */
+    margin: 10px; /* Отступы между графиками */
+}
+
+.chart-container {
+    width: 100%; /* Ширина контейнера */
+    height: 180px; /* Высота контейнера */
+    border: 1px solid #ccc; /* Граница для визуального выделения */
+    padding: 10px; /* Отступы вокруг графика */
+    background-color: #f9f9f9; /* Цвет фона */
+    border-radius: 5px; /* Скругленные углы */
+    box-sizing: border-box; /* Включаем отступы и границы в расчет ширины */
+}
+
+.currency-container {
+    margin-left: 5%; /* Отступ слева */
+    margin-right: 25%; /* Отступ справа */
+}
+
+.currency-container a {
+    text-align: center;
+    color: #34495e; /* Цвет текста */
+    font-size: 16px; /* Размер шрифта */
+}
+
+.margin-left{
+    margin-left: 50%; /* Отступ слева */
+}
+
+/* Уникальные названия классов для предотвращения конфликтов */
+.currency-chart-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px;
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+}
+
+.currency-chart {
+    width: 80%;
+    margin-bottom: 20px;
+}
+
+.currency-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.currency-button {
+    background-color: #4CAF50; /* Зеленый цвет кнопок */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 16px;
+}
+
+.currency-button.sell {
+    background-color: #f44336; /* Красный цвет для кнопки продажи */
+}
+
+.currency-button:hover {
+    background-color: #45a049; /* Темнее при наведении */
+}
+
+.currency-button.sell:hover {
+    background-color: #e53935; /* Темнее при наведении для кнопки продажи */
+}
+
+/* Текстовая информация о цене */
+.currency-price {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    margin-top: 10px;
+}
+
+/* Уникальные стили для верхней панели */
+.top-navbar {
+    display: flex;
+    justify-content: flex-end; /* Выравнивание кнопки по правой стороне */
+    align-items: center;
+    background-color: #333;
+    padding: 10px 20px;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.top-navbar a.home-button {
+    background-color: #777; /* Серый цвет кнопки */
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    padding: 10px 20px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    margin-right: 10%;
+}
+
+.top-navbar a.home-button:hover {
+    background-color: #555; /* Темно-серый при наведении */
+}
+
+/* Отступ для основного контента */
+.page-content {
+    margin-top: 60px; /* Чтобы контент не пересекался с фиксированной панелью */
+}
+
+.wallet-info-container {
+    background-color: white;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 36%;
+    right: 20px;
+    transform: translateY(-50%);
+    width: 22%;
+    height: 62%;
+}
+
+.wallet-info-container h3 {
+    margin-top: 0;
+    font-size: 24px; /* Увеличенный размер шрифта */
+    font-weight: bold; /* Жирный шрифт */
+    color: #34495e;
+    text-align: center; /* Выравнивание по центру */
+    text-transform: uppercase; /* Преобразование текста в верхний регистр */
+    letter-spacing: 2px; /* Увеличение расстояния между буквами */
+    background: linear-gradient(90deg, rgb(50, 70, 92) 0%, rgb(9, 154, 191) 100%); /* Градиент фона */
+    -webkit-background-clip: text; /* Использование фона для текста */
+    -webkit-text-fill-color: transparent; /* Прозрачный цвет текста для градиента */
+    padding-bottom: 10px; /* Отступ снизу для визуального пространства */
+    border-bottom: 2px solid #34495e;
+ }
+
+.wallet-info-container ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.wallet-info-container li {
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+ul {
+    list-style-type: none; /* Убираем стандартные маркеры списка */
+    padding: 0; /* Убираем отступы у списка */
+    margin: 0;
+}
+
+li {
+    background-color: #f9f9f9; /* Светлый фон для карточек */
+    border-radius: 10px; /* Закругленные углы */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Легкая тень для глубины */
+    margin-bottom: 15px; /* Отступ между карточками */
+    padding: 15px; /* Внутренние отступы */
+    display: flex; /* Flexbox для удобного выравнивания */
+    justify-content: space-between; /* Выравнивание по краям */
+    align-items: center; /* Выравнивание по вертикали */
+    transition: transform 0.2s, box-shadow 0.2s; /* Плавный переход для анимации */
+}
+
+li:hover {
+    transform: translateY(-5px); /* Легкий подъем при наведении */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Усиление тени при наведении */
+}
+
+span {
+    font-size: 16px; /* Размер шрифта */
+    color: #333; /* Темный цвет текста */
+}
+
+span:first-child {
+    font-weight: bold; /* Жирный шрифт для валюты */
+    color: #34495e; /* Приятный синий цвет для акцента */
+}
+
+span:last-child {
+    font-weight: normal; /* Обычный шрифт для суммы */
+    color: #060906; /* Зеленый цвет для баланса */
+}
 

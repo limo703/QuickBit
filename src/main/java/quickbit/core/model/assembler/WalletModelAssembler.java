@@ -10,12 +10,12 @@ import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ValetModelAssembler implements RepresentationModelAssembler<Wallet, WalletModel> {
+public class WalletModelAssembler implements RepresentationModelAssembler<Wallet, WalletModel> {
 
     private final CurrencyService currencyService;
 
     @Autowired
-    public ValetModelAssembler(CurrencyService currencyService) {
+    public WalletModelAssembler(CurrencyService currencyService) {
         this.currencyService = currencyService;
     }
 
@@ -27,8 +27,8 @@ public class ValetModelAssembler implements RepresentationModelAssembler<Wallet,
         Currency currency = currencyService.getById(entity.getCurrencyId());
 
         walletModel
-            .setCurrencyName(currency.getName())
-            .setScore(entity.getScore().doubleValue());
+            .setCurrency(currency.getName())
+            .setScore(entity.getAmount().doubleValue());
 
         return walletModel;
     }

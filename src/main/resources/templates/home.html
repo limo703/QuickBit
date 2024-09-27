@@ -5,13 +5,84 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Домашняя страница</title>
     <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
 </head>
 <body>
 
-<div class="home-button-container">
-    <a href="/home" class="home-button">На главную</a>
+<div class="top-navbar">
+    <a href="/home" class="home-button">Домой</a>
 </div>
 
+<div class="charts-container currency-container">
+    <!-- Цикл по криптовалютам для вывода данных и построения графиков -->
+    <div th:each="currencyModel : ${currencyModels.content}" class="chart-item">
+        <a th:href="@{/currency/{name}(name=${currencyModel.name})}" class="plain-link margin-left">
+            <h3 th:text="${currencyModel.name}"></h3>
+        </a>
+        <div class="chart-container">
+            <canvas th:attr="id='chart-' + ${currencyModel.name}" width="300" height="150"></canvas>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    var currencies = /*[[${currencyModels.content}]]*/ [];
+
+    /* Функция для создания графиков для каждой валюты */
+    currencies.forEach(currency => {
+const ctx = document.getElementById('chart-' + currency.name).getContext('2d');
+        const labels = Object.keys(currency.pricesMap); // Метки по времени
+        const data = Object.values(currency.pricesMap); // Исправлено, удалена лишняя точка
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: `Курс ${currency.name}`,
+                    data: data,
+                    borderColor: getRandomColor(),
+                    borderWidth: 2,
+                    fill: false
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'hour',
+                            tooltipFormat: 'YYYY-MM-DD HH:mm'
+                        }
+                    },
+                    y: {
+                        beginAtZero: false
+                    }
+                }
+            }
+        });
+    });
+
+    /* Функция для генерации случайного цвета */
+    function getRandomColor() {
+        const letters = '0123456789ABCDEF';
+        let color = '#';
+        for (let i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+</script>
+
+<div class="wallet-info-container">
+    <h3>Кошельки</h3>
+    <ul>
+        <li th:each="wallet : ${wallets}">
+            <span th:text="${wallet.currency}"></span>: <span th:text="${wallet.score}"></span>
+        </li>
+    </ul>
+</div>
 
 <div class="home-container">
     <div class="profile-header">
@@ -29,8 +100,8 @@
 
     <div class="wallet-info">
         <h2>Баланс</h2>
-        <a th:href="@{/user/{username}/wallet/deposit(username=${authUser.username})}" class="plain-link">
-            <p th:text="'Счёт: ' + ${authUser.wallet.score} + ' ' + ${authUser.wallet.currency.name}">Счёт: 0 Валюта</p>
+        <a th:href="@{/wallet}" class="plain-link">
+            <p th:text="'Счёт: ' + ${authUser.wallet.score} + ' ' + ${authUser.wallet.currency}">Счёт: 0 Валюта</p>
         </a>
     </div>
 </div>

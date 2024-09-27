@@ -24,6 +24,7 @@ public class User extends UuidTimedEntity {
     private String firstName;
     private String lastName;
     private UserRole role;
+    private Long defaultWalletId;
 
     @Column(name = "avatar_image_id")
     private Long avatarId;
@@ -32,10 +33,7 @@ public class User extends UuidTimedEntity {
         fetch = FetchType.LAZY,
         mappedBy = "user"
     )
-    private Set<Wallet> wallet = new HashSet<>();
-
-    @Column(name = "wallet_id")
-    private Long walletId;
+    private Set<Wallet> wallets = new HashSet<>();
 
     public String getEmail() {
         return email;
@@ -100,21 +98,21 @@ public class User extends UuidTimedEntity {
         return this;
     }
 
-    public Long getWalletId() {
-        return walletId;
+    public Long getDefaultWalletId() {
+        return defaultWalletId;
     }
 
-    public User setWalletId(Long walletId) {
-        this.walletId = walletId;
+    public User setDefaultWalletId(Long defaultWalletId) {
+        this.defaultWalletId = defaultWalletId;
         return this;
     }
 
-    public Set<Wallet> getWallet() {
-        return wallet;
+    public Set<Wallet> getWallets() {
+        return wallets;
     }
 
-    public User setWallet(Set<Wallet> wallet) {
-        this.wallet = wallet;
+    public User setWallets(Set<Wallet> wallets) {
+        this.wallets = wallets;
         return this;
     }
 }

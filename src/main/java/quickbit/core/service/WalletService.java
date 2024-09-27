@@ -1,28 +1,29 @@
 package quickbit.core.service;
 
 import quickbit.core.form.CreateTransactionForm;
-import quickbit.core.form.DepositUserForm;
+import quickbit.core.form.DepositForm;
+import quickbit.dbcore.entity.Currency;
 import quickbit.dbcore.entity.User;
 import quickbit.dbcore.entity.Wallet;
 import com.sun.istack.NotNull;
 
-public interface WalletService {
+import java.util.Set;
 
-    Wallet getByUserId(@NotNull Long userId);
+public interface WalletService {
 
     Wallet save(@NotNull Wallet wallet);
 
     @NotNull
-    Wallet getById(Long valetId);
+    Wallet getById(Long walletId);
 
     @NotNull
     Wallet getOrCreate(
-        @NotNull Long userId,
-        @NotNull Long currencyId
+        @NotNull User user,
+        @NotNull Currency currency
     );
 
     Wallet deposit(
-        @NotNull DepositUserForm form,
+        @NotNull DepositForm form,
         @NotNull User user
     );
 
@@ -30,4 +31,6 @@ public interface WalletService {
         @NotNull CreateTransactionForm form,
         @NotNull User user
     );
+
+    Set<Wallet> getAllNonDefaultWallets(@NotNull Long userId);
 }

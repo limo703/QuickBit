@@ -7,7 +7,7 @@ public class UserModel extends RepresentationModel<UserModel> {
     private String username;
     private String firstName;
     private String lastName;
-    private WalletModel valet;
+    private WalletModel wallet;
     private String uuid;
     private String avatarUuid;
 
@@ -38,12 +38,12 @@ public class UserModel extends RepresentationModel<UserModel> {
         return this;
     }
 
-    public WalletModel getValet() {
-        return valet;
+    public WalletModel getWallet() {
+        return wallet;
     }
 
-    public UserModel setValet(WalletModel valet) {
-        this.valet = valet;
+    public UserModel setWallet(WalletModel wallet) {
+        this.wallet = wallet;
         return this;
     }
 

@@ -1,4 +1,4 @@
-package quickbit.core.model;
+package quickbit.core.model.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

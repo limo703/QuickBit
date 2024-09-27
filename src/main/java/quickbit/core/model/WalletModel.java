@@ -5,7 +5,7 @@ import org.springframework.hateoas.RepresentationModel;
 public class WalletModel extends RepresentationModel<WalletModel> {
 
     private Double score;
-    private String currencyName;
+    private String currency;
 
     public Double getScore() {
         return score;
@@ -16,12 +16,12 @@ public class WalletModel extends RepresentationModel<WalletModel> {
         return this;
     }
 
-    public String getCurrencyName() {
-        return currencyName;
+    public String getCurrency() {
+        return currency;
     }
 
-    public WalletModel setCurrencyName(String currencyName) {
-        this.currencyName = currencyName;
+    public WalletModel setCurrency(String currency) {
+        this.currency = currency;
         return this;
     }
 }

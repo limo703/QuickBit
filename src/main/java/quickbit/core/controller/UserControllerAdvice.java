@@ -1,4 +1,4 @@
-package quickbit.core.controller.user;
+package quickbit.core.controller;
 
 import quickbit.core.model.assembler.UserModelAssembler;
 import quickbit.core.service.UserService;
@@ -9,13 +9,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@ControllerAdvice(
-    basePackages = {
-        "com.example.petProject.core.controller.user",
-        "com.example.petProject.core.controller.api"
-    }
-)
-
+@ControllerAdvice(assignableTypes = UserController.class)
 public class UserControllerAdvice {
 
     public static final String USER_MODEL = "userModel";

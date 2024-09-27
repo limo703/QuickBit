@@ -14,23 +14,24 @@ import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
 public class UserModelAssembler implements RepresentationModelAssembler<User, UserModel> {
 
     private final WalletService walletService;
-    private final ValetModelAssembler valetModelAssembler;
+    private final WalletModelAssembler walletModelAssembler;
     private final ImageService imageService;
 
     @Autowired
     public UserModelAssembler(
         WalletService walletService,
-        ValetModelAssembler valetModelAssembler,
+        WalletModelAssembler walletModelAssembler,
         ImageService imageService
     ) {
         this.walletService = walletService;
-        this.valetModelAssembler = valetModelAssembler;
+        this.walletModelAssembler = walletModelAssembler;
         this.imageService = imageService;
     }
 
@@ -39,19 +40,19 @@ public class UserModelAssembler implements RepresentationModelAssembler<User, Us
     public UserModel toModel(@NotNull User entity) {
         UserModel userModel = new UserModel();
 
-        Wallet wallet = walletService.getByUserId(entity.getId());
+        Wallet wallet = walletService.getById(entity.getDefaultWalletId());
 
-        Image avatar = imageService.getById(entity.getAvatarId());
+        Optional<Image> avatar = imageService.findById(entity.getAvatarId());
 
         userModel
             .setFirstName(entity.getFirstName())
             .setLastName(entity.getLastName())
             .setUsername(entity.getUsername())
             .setUuid(entity.getUuid())
-            .setAvatar(avatar.getUuid())
-            .setValet(
-                valetModelAssembler.toModel(wallet)
+            .setWallet(
+                walletModelAssembler.toModel(wallet)
             );
+        avatar.ifPresent(image -> userModel.setAvatar(image.getUuid()));
 
         return userModel;
     }

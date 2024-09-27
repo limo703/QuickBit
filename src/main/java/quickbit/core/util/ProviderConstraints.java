@@ -11,4 +11,6 @@ public class ProviderConstraints {
     public final static String FIAT_CURRENCY_PROVIDER_BASE_URL = "https://api.currencyfreaks.com";
     public final static String FIAT_LATEST_CURRENCY_RATE_URL = "/v2.0/rates/latest";
 
+    //тут беру новости
+    public final static String LATEST_NEWS_URL = "https://www.alphavantage.co/query";
 }
