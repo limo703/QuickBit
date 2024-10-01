@@ -35,8 +35,8 @@ This project is a **QuickBit Dashboard** designed to display real-time cryptocur
 
 1. **Clone the repository**:
     ```bash
-    git clone https://github.com/your-repo/crypto-dashboard.git
-    cd crypto-dashboard
+    git clone https://github.com/limo703/QuickBit.git
+    cd QuickBit
     ```
 
 2. **Configure the application**:
