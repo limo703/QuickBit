@@ -1,47 +1,44 @@
 package quickbit.core.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.LocalDateTime;
 
 public class NewsModel {
 
-    private String title;
-    private String content;
-    private String link;
-    private LocalDateTime createdAt;
+    private final String title;
+    private final String content;
+    private final String link;
+    private final LocalDateTime createdAt;
+
+    @JsonCreator
+    public NewsModel(
+        @JsonProperty("title") String title,
+        @JsonProperty("content") String content,
+        @JsonProperty("link") String link,
+        @JsonProperty("createdAt") LocalDateTime createdAt
+    ) {
+        this.title = title;
+        this.content = content;
+        this.link = link;
+        this.createdAt = createdAt;
+    }
 
     public String getTitle() {
         return title;
-    }
-
-    public NewsModel setTitle(String title) {
-        this.title = title;
-        return this;
     }
 
     public String getContent() {
         return content;
     }
 
-    public NewsModel setContent(String content) {
-        this.content = content;
-        return this;
-    }
-
     public String getLink() {
         return link;
-    }
-
-    public NewsModel setLink(String link) {
-        this.link = link;
-        return this;
     }
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public NewsModel setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-        return this;
-    }
 }

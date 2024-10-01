@@ -153,4 +153,22 @@ public class WalletServiceImpl implements WalletService {
     public Set<Wallet> getAllNonDefaultWallets(@NotNull Long userId) {
         return walletRepository.findAllByUserIdWithoutDefault(userId);
     }
+
+    @Override
+    public Set<Wallet> findAllFiatWallets(@NotNull Long userId) {
+        return walletRepository.findAllFiatByUserId(userId);
+    }
+
+    @Override
+    public Set<Wallet> findAllNonFiatWallets(@NotNull Long userId) {
+        return walletRepository.findAllNotFiatByUserId(userId);
+    }
+
+    @Override
+    public Optional<Wallet> findWalletByUserIdAndCurrencyId(
+        @NotNull Long userId,
+        @NotNull Long currencyId
+    ) {
+        return walletRepository.findByUserIdAndCurrencyId(userId, currencyId);
+    }
 }

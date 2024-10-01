@@ -1,20 +1,11 @@
 package quickbit.core.model.data;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.List;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class NewsDataModel {
     private String items;
-
-    @JsonProperty("sentiment_score_definition")
-    private String sentimentScoreDefinition;
-
-    @JsonProperty("relevance_score_definition")
-    private String relevanceScoreDefinition;
-
+    private String sentiment_score_definition;
+    private String relevance_score_definition;
     private List<FeedItem> feed;
 
     public String getItems() {
@@ -26,21 +17,21 @@ public class NewsDataModel {
         return this;
     }
 
-    public String getSentimentScoreDefinition() {
-        return sentimentScoreDefinition;
+    public String getSentiment_score_definition() {
+        return sentiment_score_definition;
     }
 
-    public NewsDataModel setSentimentScoreDefinition(String sentimentScoreDefinition) {
-        this.sentimentScoreDefinition = sentimentScoreDefinition;
+    public NewsDataModel setSentiment_score_definition(String sentiment_score_definition) {
+        this.sentiment_score_definition = sentiment_score_definition;
         return this;
     }
 
-    public String getRelevanceScoreDefinition() {
-        return relevanceScoreDefinition;
+    public String getRelevance_score_definition() {
+        return relevance_score_definition;
     }
 
-    public NewsDataModel setRelevanceScoreDefinition(String relevanceScoreDefinition) {
-        this.relevanceScoreDefinition = relevanceScoreDefinition;
+    public NewsDataModel setRelevance_score_definition(String relevance_score_definition) {
+        this.relevance_score_definition = relevance_score_definition;
         return this;
     }
 
@@ -53,28 +44,20 @@ public class NewsDataModel {
         return this;
     }
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class FeedItem {
         private String title;
         private String url;
-        private String timePublished;
-
+        private String time_published;
         private List<String> authors;
         private String summary;
-        private String bannerImage;
+        private String banner_image;
         private String source;
-        private String categoryWithinSource;
-        private String sourceDomain;
-
+        private String category_within_source;
+        private String source_domain;
         private List<Topic> topics;
-
-        @JsonProperty("overall_sentiment_score")
-        private double overallSentimentScore;
-
-        @JsonProperty("overall_sentiment_label")
-        private String overallSentimentLabel;
-
-        private List<TickerSentiment> tickerSentiment;
+        private double overall_sentiment_score;
+        private String overall_sentiment_label;
+        private List<TickerSentiment> ticker_sentiment;
 
         public String getTitle() {
             return title;
@@ -94,12 +77,12 @@ public class NewsDataModel {
             return this;
         }
 
-        public String getTimePublished() {
-            return timePublished;
+        public String getTime_published() {
+            return time_published;
         }
 
-        public FeedItem setTimePublished(String timePublished) {
-            this.timePublished = timePublished;
+        public FeedItem setTime_published(String time_published) {
+            this.time_published = time_published;
             return this;
         }
 
@@ -121,12 +104,12 @@ public class NewsDataModel {
             return this;
         }
 
-        public String getBannerImage() {
-            return bannerImage;
+        public String getBanner_image() {
+            return banner_image;
         }
 
-        public FeedItem setBannerImage(String bannerImage) {
-            this.bannerImage = bannerImage;
+        public FeedItem setBanner_image(String banner_image) {
+            this.banner_image = banner_image;
             return this;
         }
 
@@ -139,21 +122,21 @@ public class NewsDataModel {
             return this;
         }
 
-        public String getCategoryWithinSource() {
-            return categoryWithinSource;
+        public String getCategory_within_source() {
+            return category_within_source;
         }
 
-        public FeedItem setCategoryWithinSource(String categoryWithinSource) {
-            this.categoryWithinSource = categoryWithinSource;
+        public FeedItem setCategory_within_source(String category_within_source) {
+            this.category_within_source = category_within_source;
             return this;
         }
 
-        public String getSourceDomain() {
-            return sourceDomain;
+        public String getSource_domain() {
+            return source_domain;
         }
 
-        public FeedItem setSourceDomain(String sourceDomain) {
-            this.sourceDomain = sourceDomain;
+        public FeedItem setSource_domain(String source_domain) {
+            this.source_domain = source_domain;
             return this;
         }
 
@@ -166,38 +149,37 @@ public class NewsDataModel {
             return this;
         }
 
-        public double getOverallSentimentScore() {
-            return overallSentimentScore;
+        public double getOverall_sentiment_score() {
+            return overall_sentiment_score;
         }
 
-        public FeedItem setOverallSentimentScore(double overallSentimentScore) {
-            this.overallSentimentScore = overallSentimentScore;
+        public FeedItem setOverall_sentiment_score(double overall_sentiment_score) {
+            this.overall_sentiment_score = overall_sentiment_score;
             return this;
         }
 
-        public String getOverallSentimentLabel() {
-            return overallSentimentLabel;
+        public String getOverall_sentiment_label() {
+            return overall_sentiment_label;
         }
 
-        public FeedItem setOverallSentimentLabel(String overallSentimentLabel) {
-            this.overallSentimentLabel = overallSentimentLabel;
+        public FeedItem setOverall_sentiment_label(String overall_sentiment_label) {
+            this.overall_sentiment_label = overall_sentiment_label;
             return this;
         }
 
-        public List<TickerSentiment> getTickerSentiment() {
-            return tickerSentiment;
+        public List<TickerSentiment> getTicker_sentiment() {
+            return ticker_sentiment;
         }
 
-        public FeedItem setTickerSentiment(List<TickerSentiment> tickerSentiment) {
-            this.tickerSentiment = tickerSentiment;
+        public FeedItem setTicker_sentiment(List<TickerSentiment> ticker_sentiment) {
+            this.ticker_sentiment = ticker_sentiment;
             return this;
         }
     }
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Topic {
         private String topic;
-        private double relevanceScore;
+        private String relevance_score;
 
         public String getTopic() {
             return topic;
@@ -208,27 +190,21 @@ public class NewsDataModel {
             return this;
         }
 
-        public double getRelevanceScore() {
-            return relevanceScore;
+        public String getRelevance_score() {
+            return relevance_score;
         }
 
-        public Topic setRelevanceScore(double relevanceScore) {
-            this.relevanceScore = relevanceScore;
+        public Topic setRelevance_score(String relevance_score) {
+            this.relevance_score = relevance_score;
             return this;
         }
-
     }
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class TickerSentiment {
         private String ticker;
-        private double relevanceScore;
-
-        @JsonProperty("ticker_sentiment_score")
-        private double tickerSentimentScore;
-
-        @JsonProperty("ticker_sentiment_label")
-        private String tickerSentimentLabel;
+        private String relevance_score;
+        private String ticker_sentiment_score;
+        private String ticker_sentiment_label;
 
         public String getTicker() {
             return ticker;
@@ -239,32 +215,31 @@ public class NewsDataModel {
             return this;
         }
 
-        public double getRelevanceScore() {
-            return relevanceScore;
+        public String getRelevance_score() {
+            return relevance_score;
         }
 
-        public TickerSentiment setRelevanceScore(double relevanceScore) {
-            this.relevanceScore = relevanceScore;
+        public TickerSentiment setRelevance_score(String relevance_score) {
+            this.relevance_score = relevance_score;
             return this;
         }
 
-        public double getTickerSentimentScore() {
-            return tickerSentimentScore;
+        public String getTicker_sentiment_score() {
+            return ticker_sentiment_score;
         }
 
-        public TickerSentiment setTickerSentimentScore(double tickerSentimentScore) {
-            this.tickerSentimentScore = tickerSentimentScore;
+        public TickerSentiment setTicker_sentiment_score(String ticker_sentiment_score) {
+            this.ticker_sentiment_score = ticker_sentiment_score;
             return this;
         }
 
-        public String getTickerSentimentLabel() {
-            return tickerSentimentLabel;
+        public String getTicker_sentiment_label() {
+            return ticker_sentiment_label;
         }
 
-        public TickerSentiment setTickerSentimentLabel(String tickerSentimentLabel) {
-            this.tickerSentimentLabel = tickerSentimentLabel;
+        public TickerSentiment setTicker_sentiment_label(String ticker_sentiment_label) {
+            this.ticker_sentiment_label = ticker_sentiment_label;
             return this;
         }
     }
-
 }

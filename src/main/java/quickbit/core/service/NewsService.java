@@ -1,8 +1,13 @@
 package quickbit.core.service;
 
-import quickbit.core.model.data.PriceResponseDataModel;
+import quickbit.core.model.NewsModel;
+
+import java.util.List;
+import java.util.Set;
 
 public interface NewsService {
 
-    PriceResponseDataModel updateNews();
+    List<NewsModel> getNews();
+
+    void updateNews();
 }

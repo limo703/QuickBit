@@ -44,7 +44,6 @@ public class CurrencyServiceImpl implements CurrencyService {
     private final CurrencyPriceCacheService currencyPriceCacheService;
     private final String apiKey;
     private final String fiatApiKey;
-    private final OkHttpClient client;
 
     @Autowired
     public CurrencyServiceImpl(
@@ -57,7 +56,6 @@ public class CurrencyServiceImpl implements CurrencyService {
         this.currencyRepository = currencyRepository;
         this.currencyPriceRepository = currencyPriceRepository;
         this.currencyPriceCacheService = currencyPriceCacheService;
-        this.client = new OkHttpClient();
         this.apiKey = apiKey;
         this.fiatApiKey = fiatApiKey;
     }
@@ -179,7 +177,6 @@ public class CurrencyServiceImpl implements CurrencyService {
             .map(Currency::getDescription)
             .collect(Collectors.toSet());
 
-        String responseJson = null;
         try {
             URIBuilder query = new URIBuilder(CURRENCY_PROVIDER_BASE_URL + LATEST_CURRENCY_RATE_URL);
             query.addParameter("slug", String.join(",", currencyNames));
@@ -191,15 +188,11 @@ public class CurrencyServiceImpl implements CurrencyService {
                 .url(query.build().toString())
                 .build();
 
-            Response response = client.newCall(request).execute();
-            if (response.isSuccessful()) {
-                responseJson = response.body().string();
-            }
+            return HttpUtil.sendRequest(request, PriceResponseDataModel.class);
 
-        } catch (URISyntaxException | java.io.IOException e) {
+        } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
-        return HttpUtil.parseJsonToModel(responseJson, PriceResponseDataModel.class);
     }
 
     @Override
@@ -222,7 +215,6 @@ public class CurrencyServiceImpl implements CurrencyService {
     }
 
     private FiatCurrencyDataModel retrieveFiatCurrencyRates() {
-        String responseJson = null;
         try {
             URIBuilder query = new URIBuilder(FIAT_CURRENCY_PROVIDER_BASE_URL + FIAT_LATEST_CURRENCY_RATE_URL);
             query.addParameter("apikey", fiatApiKey);
@@ -231,14 +223,10 @@ public class CurrencyServiceImpl implements CurrencyService {
                 .url(query.build().toString())
                 .build();
 
-            Response response = client.newCall(request).execute();
-            if (response.isSuccessful()) {
-                responseJson = response.body().string();
-            }
+            return HttpUtil.sendRequest(request, FiatCurrencyDataModel.class);
 
-        } catch (URISyntaxException | IOException e) {
+        } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
-        return HttpUtil.parseJsonToModel(responseJson, FiatCurrencyDataModel.class);
     }
 }

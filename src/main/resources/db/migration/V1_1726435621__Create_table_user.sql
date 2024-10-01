@@ -7,7 +7,6 @@ create table users
     first_name        varchar,
     last_name         varchar,
     role              varchar   not null,
-    wallet_id         integer,
     avatar_image_id   integer,
     default_wallet_id integer,
 

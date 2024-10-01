@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Transaction</title>
+  <link rel="stylesheet" th:href="@{/css/styles.css}">
+  <script th:src="@{/js/transaction.js}"></script>
+</head>
+<body>
+<div class="transaction-container">
+  <h2>Purchase Currency: <span th:text="${purchaseCurrency.name}"></span></h2>
+  <p>Sell Currency: <span th:text="${sellCurrency.name}"></span></p>
+
+  <div class="wallet-info">
+    <h3>Your Wallet</h3>
+    <p>Balance: <span th:text="${wallet.getScore()}"></span> <span th:text="${sellCurrency.name}"></span></p>
+  </div>
+
+  <div class="price-info">
+    <h3>Transaction Details</h3>
+    <p>Last price: <span th:text="${lastPrice}"></span> <span th:text="${sellCurrency.name}"></span> per 1 <span th:text="${purchaseCurrency.name}"></span></p>
+  </div>
+
+  <form th:action="@{/currency/transaction}" method="post" th:object="${transactionForm}">
+    <div class="form-group">
+      <input type="hidden" name="purchaseCurrencyName" th:value="${purchaseCurrency.getName()}">
+      <input type="hidden" name="sellCurrencyName" th:value="${sellCurrency.getName()}">
+      <label for="amount">Amount to Purchase</label>
+      <input type="number" id="amount" name="amount" required min="0" step="0.01">
+      <label for="amount">Price</label>
+      <input type="number" id="price" name="price" required min="0" step="0.01">
+    </div>
+
+    <div class="form-group">
+      <label for="total">Total Cost:</label>
+      <input type="text" id="total" name="total" readonly>
+    </div>
+
+    <button type="submit">Confirm Purchase</button>
+  </form>
+</div>
+
+<script th:inline="javascript">
+  const purchasePrice = /*[[${lastPrice}]]*/ 0;
+  const sellCurrency = /*[[${sellCurrency.name}]]*/ '';
+
+  // Обновление стоимости на основе количества покупаемой валюты
+  document.getElementById('amount').addEventListener('input', function () {
+    const amount = parseFloat(this.value) || 0;
+    const total = amount * purchasePrice;
+    document.getElementById('total').value = total.toFixed(2) + ' ' + sellCurrency;
+  });
+</script>
+</body>
+</html>

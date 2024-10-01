@@ -94,6 +94,7 @@ public class UserServiceImpl implements UserService {
             .setPassword(
                 passwordEncoder.encode(form.getPassword())
             );
+
         newUser = repository.save(newUser);
 
         Wallet wallet = new Wallet();

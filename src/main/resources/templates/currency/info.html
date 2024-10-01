@@ -22,8 +22,16 @@
     </div>
   </div>
   <div class="currency-buttons">
-    <button class="currency-button buy" th:text="'Купить ' + ${currencyModel.name}"></button>
-    <button class="currency-button sell" th:text="'Продать ' + ${currencyModel.name}"></button>
+    <form th:action="@{/currency/transaction}" method="get">
+      <input type="hidden" name="type" value="1">
+      <input type="hidden" name="currencyName" th:value="${currencyModel.getName()}">
+      <button class="currency-button buy" th:text="'Купить ' + ${currencyModel.name}"></button>
+    </form>
+    <form th:action="@{/currency/transaction}" method="get">
+      <input type="hidden" name="type" value="0">
+      <input type="hidden" name="currencyName" th:value="${currencyModel.getName()}">
+      <button class="currency-button sell" th:text="'Продать ' + ${currencyModel.name}"></button>
+    </form>
   </div>
 </div>
 
@@ -41,11 +49,12 @@
     data: {
       labels: labels,
       datasets: [{
-        label: `Курс ${currency.name}`,
+        label: `Rate ${currency.name}`,
         data: data,
         borderColor: getRandomColor(),
         borderWidth: 2,
-        fill: false
+        fill: false,
+        pointRadius: 0
       }]
     },
     options: {
