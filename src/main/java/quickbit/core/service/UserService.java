@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.lang.Nullable;
 
 import java.util.Optional;
+import java.util.Set;
 
 public interface UserService {
 
@@ -30,4 +31,5 @@ public interface UserService {
     User create(@NotNull CreateUserForm form);
 
     Page<User> findAll(@NotNull Pageable pageable);
+
 }

@@ -22,12 +22,12 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Set<Transaction> findAllByPurchaseAndSellCurrencies(Long purchaseId, Long sellId) {
-        return transactionRepository.findAllByPurchaseCurrencyIdAndSellCurrencyId(purchaseId, sellId);
+    public Set<Transaction> findAllByCurrencyIdAndTypeAndPrice(Long currencyId, Boolean typeOpp, Double price) {
+        return transactionRepository.findAllByCurrencyIdAndTypeOppAndPrice(currencyId, typeOpp, price);
     }
 
     @Override
-    public Transaction create(
+    public Transaction save(
         @NotNull Transaction transaction
     ) {
         return transactionRepository.save(transaction);
@@ -42,5 +42,4 @@ public class TransactionServiceImpl implements TransactionService {
     public void removeAll(@NotNull Iterable<Transaction> transactions) {
         transactionRepository.deleteAll(transactions);
     }
-
 }

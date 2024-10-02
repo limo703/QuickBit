@@ -19,8 +19,8 @@ public class NewsScheduler {
         this.newsService = newsService;
     }
 
-    @Scheduled(fixedDelay = 5 * 60 * 60 * 1000)
-    public void scheduledNotFiatCurrency() {
-        newsService.updateNews();
-    }
+//    @Scheduled(fixedDelay = 5 * 60 * 60 * 1000)
+//    public void scheduledNotFiatCurrency() {
+//        newsService.updateNews();
+//    }
 }

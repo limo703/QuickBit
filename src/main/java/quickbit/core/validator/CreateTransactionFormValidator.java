@@ -12,8 +12,7 @@ public class CreateTransactionFormValidator implements Validator {
 
     private final static String PRICE_FIELD = "price";
     private final static String AMOUNT_FIELD = "amount";
-    private final static String PURCHASE_CURRENCY_NAME_FIELD = "purchaseCurrencyName";
-    private final static String SELL_CURRENCY_NAME_FIELD = "sellCurrencyName";
+    private final static String CURRENCY_NAME_FIELD = "currencyName";
     private final static String ERROR_IS_EMPTY = "error.is.empty";
 
     @Override
@@ -31,11 +30,8 @@ public class CreateTransactionFormValidator implements Validator {
         if (Objects.isNull(form.getAmount())) {
             errors.rejectValue(AMOUNT_FIELD, ERROR_IS_EMPTY);
         }
-        if (Objects.isNull(form.getPurchaseCurrencyName())) {
-            errors.rejectValue(PURCHASE_CURRENCY_NAME_FIELD, ERROR_IS_EMPTY);
-        }
-        if (Objects.isNull(form.getSellCurrencyName())) {
-            errors.rejectValue(SELL_CURRENCY_NAME_FIELD, ERROR_IS_EMPTY);
+        if (Objects.isNull(form.getCurrencyName())) {
+            errors.rejectValue(CURRENCY_NAME_FIELD, ERROR_IS_EMPTY);
         }
     }
 }

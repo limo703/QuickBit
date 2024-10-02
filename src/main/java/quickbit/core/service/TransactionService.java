@@ -7,9 +7,13 @@ import java.util.Set;
 
 public interface TransactionService {
 
-    Set<Transaction> findAllByPurchaseAndSellCurrencies(@NotNull Long purchaseId, @NotNull Long sellId);
+    Set<Transaction> findAllByCurrencyIdAndTypeAndPrice(
+        @NotNull Long currencyId,
+        @NotNull Boolean typeOpp,
+        @NotNull Double price
+    );
 
-    Transaction create(@NotNull Transaction transaction);
+    Transaction save(@NotNull Transaction transaction);
 
     void remove(@NotNull Transaction transaction);
 

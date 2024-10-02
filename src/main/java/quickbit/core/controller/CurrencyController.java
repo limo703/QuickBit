@@ -30,13 +30,10 @@ import quickbit.dbcore.entity.Wallet;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("currency")
 public class CurrencyController {
-
-    private final static String DEFAULT_CURRENCY = "USD";
 
     private final CurrencyService currencyService;
     private final WalletService walletService;
@@ -85,24 +82,22 @@ public class CurrencyController {
     @PreAuthorize("@permissionService.check(#authUser)")
     public ModelAndView createTransactionPage(
         @RequestParam("currencyName") String currencyName,
-        @RequestParam("type") boolean type,
+        @RequestParam("typeOpp") boolean type,
         @AuthenticationPrincipal AuthUser authUser
     ) {
         User user = authUser.getUser();
         Currency currency = currencyService.getByName(currencyName);
-        Currency defaultCurrency = currencyService.getByName(DEFAULT_CURRENCY);
+        Currency defaultCurrency = currencyService.getDefault();
 
         Wallet wallet = walletService.getOrCreate(user, currency);
         Wallet defaultWallet = walletService.getOrCreate(user, defaultCurrency);
 
-        Currency purchaseCurrency = type ? currency : defaultCurrency;
-        Currency sellCurrency = type ? defaultCurrency : currency;
         wallet = type ? defaultWallet : wallet;
-        BigDecimal price = currencyService.getLastPrice(purchaseCurrency.getId());
+        BigDecimal price = currencyService.getLastPrice(currency.getId());
 
         return new ModelAndView("currency/transaction")
-            .addObject("purchaseCurrency", currencyModelAssembler.toModel(purchaseCurrency))
-            .addObject("sellCurrency", currencyModelAssembler.toModel(sellCurrency))
+            .addObject("currency", currencyModelAssembler.toModel(currency))
+            .addObject("typeOpp", type)
             .addObject("lastPrice", price.round( new MathContext(7, RoundingMode.HALF_UP)))
             .addObject("wallet", walletModelAssembler.toModel(wallet))
             .addObject("transactionForm", new CreateTransactionForm());

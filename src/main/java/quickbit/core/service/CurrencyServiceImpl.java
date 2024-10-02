@@ -39,6 +39,8 @@ import static quickbit.core.util.ProviderConstraints.LATEST_CURRENCY_RATE_URL;
 @Service
 public class CurrencyServiceImpl implements CurrencyService {
 
+    private final static String DEFAULT_CURRENCY = "USD";
+
     private final CurrencyRepository currencyRepository;
     private final CurrencyPriceRepository currencyPriceRepository;
     private final CurrencyPriceCacheService currencyPriceCacheService;
@@ -63,7 +65,7 @@ public class CurrencyServiceImpl implements CurrencyService {
     //нужно сделать настраиваемым этот момент и дописать логику
     @Override
     public Currency getDefault() {
-        return currencyRepository.findByName("USD")
+        return currencyRepository.findByName(DEFAULT_CURRENCY)
             .orElseThrow(EntityNotFoundException::new);
     }
 
@@ -197,7 +199,7 @@ public class CurrencyServiceImpl implements CurrencyService {
 
     @Override
     public void updateFiatCurrency() {
-        List<Currency> currencies = findAllFiatWithoutDefault();
+        List<Currency> currencies = findAllFiat();
         FiatCurrencyDataModel dataModel = retrieveFiatCurrencyRates();
 
         Set<CurrencyPrice> newPrices = new HashSet<>();

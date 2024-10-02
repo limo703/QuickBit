@@ -12,14 +12,12 @@ import quickbit.dbcore.entity.User;
 import quickbit.dbcore.entity.Wallet;
 import quickbit.dbcore.repositories.WalletRepository;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
-import java.util.Comparator;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class WalletServiceImpl implements WalletService {
@@ -27,16 +25,19 @@ public class WalletServiceImpl implements WalletService {
     private final WalletRepository walletRepository;
     private final CurrencyService currencyService;
     private final TransactionService transactionService;
+    private final UserService userService;
 
     @Autowired
     public WalletServiceImpl(
         WalletRepository walletRepository,
         CurrencyService currencyService,
-        TransactionService transactionService
+        TransactionService transactionService,
+        UserService userService
     ) {
         this.walletRepository = walletRepository;
         this.currencyService = currencyService;
         this.transactionService = transactionService;
+        this.userService = userService;
     }
 
     @Override
@@ -83,70 +84,143 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     @Transactional
-    public Wallet processingTransaction(
+    public void processingTransaction(
         @NotNull CreateTransactionForm form,
         @NotNull User user
     ) {
-        Currency sellCurrency = currencyService.getByName(form.getSellCurrencyName());
-        Currency purchaseCurrency = currencyService.getByName(form.getPurchaseCurrencyName());
+        Currency oppCurrency = currencyService.getByName(form.getCurrencyName());
 
-        Set<Transaction> reverseTransactions = transactionService.findAllByPurchaseAndSellCurrencies(
-            sellCurrency.getId(),
-            purchaseCurrency.getId()
+        Set<Transaction> reverseFilteredTransactions = transactionService.findAllByCurrencyIdAndTypeAndPrice(
+            oppCurrency.getId(), form.getTypeOpp(), form.getPrice()
         );
-        reverseTransactions = reverseTransactions
-            .stream()
-            .filter(transaction -> transaction.getOperationPrice() < form.getPrice())
-            .sorted(Comparator.comparing(Transaction::getOperationPrice))
-            .collect(Collectors.toCollection(LinkedHashSet::new));
 
-        double operationSum = form.getAmount() * form.getPrice();
-        double counter = 0;
+        double transactionSum = form.getAmount() * form.getPrice();
+        double transactionAmount = form.getAmount();
+
+        double counterSum = 0;
+        double counterAmount = 0;
 
         Set<Transaction> removeTransactions = new HashSet<>();
-        for (Transaction transaction : reverseTransactions) {
-            double revOperationSum = transaction.getAmount() * transaction.getOperationPrice();
-            if (revOperationSum < operationSum) {
-                operationSum -= revOperationSum;
-                counter += revOperationSum;
-                removeTransactions.add(transaction);
+        Set<Wallet> updatedWallets = new HashSet<>();
+        for (Transaction revTransaction : reverseFilteredTransactions) {
+            double revTransactionSum = revTransaction.getAmount() * revTransaction.getOperationPrice();
+            double revTransactionAmount = revTransaction.getAmount();
+
+            if (revTransactionSum < transactionSum) {
+                transactionSum -= revTransactionSum;
+                transactionAmount -= revTransactionAmount;
+                removeTransactions.add(revTransaction);
+
+                counterSum += revTransactionSum;
+                counterAmount += revTransactionAmount;
             } else {
-                //сюда должен зайти 1 раз
-                double newRevSum = revOperationSum - operationSum;
-                counter += operationSum;
-                operationSum = 0;
-                removeTransactions.add(transaction);
-                transactionService.create(
-                    new Transaction()
-                        .setAmount(newRevSum / transaction.getOperationPrice())
-                        .setOperationPrice(transaction.getOperationPrice())
-                        .setUserId(transaction.getUserId())
-                        .setSellCurrencyId(transaction.getSellCurrencyId())
-                );
+                //сюда должен попасть 1 раз
+                revTransactionAmount -= transactionAmount;
+                counterSum += transactionSum;
+                counterAmount += transactionAmount;
+
+                transactionSum = 0;
+                transactionAmount = 0;
+
+                removeTransactions.add(revTransaction);
+
+                if (revTransactionAmount != 0) {
+                    transactionService.save(
+                        new Transaction()
+                            .setUser(revTransaction.getUser())
+                            .setOperationPrice(revTransaction.getOperationPrice())
+                            .setAmount(revTransactionAmount)
+                            .setTypeOpp(revTransaction.getTypeOpp())
+                            .setCurrencyId(revTransaction.getCurrencyId())
+                        );
+                }
+                break;
             }
         }
 
-        transactionService.removeAll(removeTransactions);
-
-        if (operationSum != 0) {
-            transactionService.create(
+        if (transactionSum != 0 && transactionAmount != 0) {
+            transactionService.save(
                 new Transaction()
-                    .setSellCurrencyId(sellCurrency.getId())
-                    .setPurchaseCurrencyId(purchaseCurrency.getId())
-                    .setAmount(operationSum / form.getPrice())
+                    .setAmount(transactionAmount)
                     .setOperationPrice(form.getPrice())
-                    .setUserId(user.getId())
+                    .setTypeOpp(form.getTypeOpp())
+                    .setCurrencyId(oppCurrency.getId())
+                    .setUser(user)
             );
         }
 
-        Wallet wallet = getOrCreate(user, purchaseCurrency);
+        updatedWallets.addAll(
+            processingRemoveTransactions(removeTransactions)
+        );
 
-        wallet
-            .setAmount(BigDecimal.valueOf(counter))
-            .setCurrency(purchaseCurrency)
-            .setUser(user);
+        updatedWallets.addAll(
+            prepareUserWallets(user, oppCurrency, counterAmount, counterSum, form.getTypeOpp())
+        );
 
-        return walletRepository.save(wallet);
+        walletRepository.saveAll(updatedWallets);
+    }
+
+    private Set<Wallet> processingRemoveTransactions(@NotNull Set<Transaction> removeTransactions) {
+        Set<Wallet> updatedWallets = new HashSet<>();
+
+        removeTransactions.forEach(transaction ->
+            updatedWallets.addAll(prepareWalletsForCloseTransaction(transaction))
+        );
+
+        transactionService.removeAll(removeTransactions);
+        return updatedWallets;
+    }
+
+    private Set<Wallet> prepareUserWallets(
+        @NotNull User user,
+        @NotNull Currency currency,
+        @NotNull Double counterAmount,
+        @NotNull Double counterDefaultAmount,
+        boolean typeOpp
+    ) {
+        Wallet opWallet = getWalletByUserIdAndCurrencyId(user.getId(), currency.getId());
+        Wallet defWallet = getDefault(user);
+
+        BigDecimal difAmount = BigDecimal.valueOf(counterAmount);
+        BigDecimal difDefAmount = BigDecimal.valueOf(counterDefaultAmount);
+
+        return updateWallets(opWallet, defWallet, difAmount, difDefAmount, typeOpp);
+    }
+
+    private Set<Wallet> prepareWalletsForCloseTransaction(@NotNull Transaction transaction) {
+        User user = userService.getById(transaction.getUserId());
+
+        Wallet opWallet = getWalletByUserIdAndCurrencyId(transaction.getUserId(), transaction.getCurrencyId());
+        Wallet defWallet = getDefault(user);
+
+        BigDecimal difAmount = BigDecimal.valueOf(transaction.getAmount());
+        BigDecimal difDefAmount = BigDecimal.valueOf(transaction.getAmount() * transaction.getOperationPrice());
+
+        return updateWallets(opWallet, defWallet, difAmount, difDefAmount, transaction.getTypeOpp());
+    }
+
+    private Set<Wallet> updateWallets(
+        Wallet opWallet,
+        Wallet defWallet,
+        BigDecimal difAmount,
+        BigDecimal difDefAmount,
+        boolean typeOpp
+    ) {
+        BigDecimal newOpWalletAmount = opWallet.getAmount();
+        BigDecimal newDefWalletAmount = defWallet.getAmount();
+
+        if (typeOpp) {
+            newOpWalletAmount = newOpWalletAmount.add(difAmount);
+            newDefWalletAmount = newDefWalletAmount.subtract(difDefAmount);
+        } else {
+            newOpWalletAmount = newOpWalletAmount.subtract(difAmount);
+            newDefWalletAmount = newDefWalletAmount.add(difDefAmount);
+        }
+
+        return Set.of(
+            opWallet.setAmount(newOpWalletAmount),
+            defWallet.setAmount(newDefWalletAmount)
+        );
     }
 
     @Override
@@ -165,10 +239,17 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public Optional<Wallet> findWalletByUserIdAndCurrencyId(
+    public Wallet getWalletByUserIdAndCurrencyId(
         @NotNull Long userId,
         @NotNull Long currencyId
     ) {
-        return walletRepository.findByUserIdAndCurrencyId(userId, currencyId);
+        return walletRepository.findByUserIdAndCurrencyId(userId, currencyId)
+            .orElseThrow(EntityNotFoundException::new);
+    }
+
+    @Override
+    public Wallet getDefault(@NotNull User user) {
+        Currency currency = currencyService.getDefault();
+        return getWalletByUserIdAndCurrencyId(user.getId(), currency.getId());
     }
 }

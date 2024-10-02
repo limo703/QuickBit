@@ -4,8 +4,8 @@ public class CreateTransactionForm {
 
     private Double amount;
     private Double price;
-    private String purchaseCurrencyName;
-    private String sellCurrencyName;
+    private String currencyName;
+    private Boolean typeOpp;
 
     public Double getAmount() {
         return amount;
@@ -25,21 +25,21 @@ public class CreateTransactionForm {
         return this;
     }
 
-    public String getPurchaseCurrencyName() {
-        return purchaseCurrencyName;
+    public String getCurrencyName() {
+        return currencyName;
     }
 
-    public CreateTransactionForm setPurchaseCurrencyName(String purchaseCurrencyName) {
-        this.purchaseCurrencyName = purchaseCurrencyName;
+    public CreateTransactionForm setCurrencyName(String currencyName) {
+        this.currencyName = currencyName;
         return this;
     }
 
-    public String getSellCurrencyName() {
-        return sellCurrencyName;
+    public Boolean getTypeOpp() {
+        return typeOpp;
     }
 
-    public CreateTransactionForm setSellCurrencyName(String sellCurrencyName) {
-        this.sellCurrencyName = sellCurrencyName;
+    public CreateTransactionForm setTypeOpp(Boolean typeOpp) {
+        this.typeOpp = typeOpp;
         return this;
     }
 }

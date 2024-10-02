@@ -7,7 +7,6 @@ import quickbit.dbcore.entity.User;
 import quickbit.dbcore.entity.Wallet;
 import com.sun.istack.NotNull;
 
-import java.util.Optional;
 import java.util.Set;
 
 public interface WalletService {
@@ -28,7 +27,7 @@ public interface WalletService {
         @NotNull User user
     );
 
-    Wallet processingTransaction(
+    void processingTransaction(
         @NotNull CreateTransactionForm form,
         @NotNull User user
     );
@@ -39,8 +38,10 @@ public interface WalletService {
 
     Set<Wallet> findAllNonFiatWallets(@NotNull Long userId);
 
-    Optional<Wallet> findWalletByUserIdAndCurrencyId(
+    Wallet getWalletByUserIdAndCurrencyId(
         @NotNull Long userId,
         @NotNull Long currencyId
     );
+
+    Wallet getDefault(@NotNull User user);
 }

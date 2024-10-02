@@ -15,17 +15,19 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.lang.Nullable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import quickbit.dbcore.repositories.WalletRepository;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     private final PasswordEncoder passwordEncoder;
     private final UserRepository repository;
-    private final WalletService walletService;
+    private final WalletRepository walletRepository;
     private final ImageService imageService;
     private final CurrencyService currencyService;
 
@@ -33,13 +35,13 @@ public class UserServiceImpl implements UserService {
     public UserServiceImpl(
         UserRepository repository,
         PasswordEncoder passwordEncoder,
-        WalletService walletService,
+        WalletRepository walletRepository,
         ImageService imageService,
         CurrencyService currencyService
     ) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
-        this.walletService = walletService;
+        this.walletRepository = walletRepository;
         this.imageService = imageService;
         this.currencyService = currencyService;
     }
@@ -104,7 +106,7 @@ public class UserServiceImpl implements UserService {
             .setCurrency(currencyService.getDefault())
             .setUser(newUser);
 
-        wallet = walletService.save(wallet);
+        wallet = walletRepository.save(wallet);
         newUser.setDefaultWalletId(wallet.getId());
 
         Image image = imageService.generateAndSaveAvatar(newUser);
@@ -117,5 +119,4 @@ public class UserServiceImpl implements UserService {
     public Page<User> findAll(@NotNull Pageable pageable) {
         return repository.findAll(pageable);
     }
-
 }

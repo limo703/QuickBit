@@ -35,6 +35,12 @@ public class User extends UuidTimedEntity {
     )
     private Set<Wallet> wallets = new HashSet<>();
 
+    @OneToMany(
+        fetch = FetchType.LAZY,
+        mappedBy = "user"
+    )
+    private Set<Transaction> transactions = new HashSet<>();
+
     public String getEmail() {
         return email;
     }
@@ -113,6 +119,15 @@ public class User extends UuidTimedEntity {
 
     public User setWallets(Set<Wallet> wallets) {
         this.wallets = wallets;
+        return this;
+    }
+
+    public Set<Transaction> getTransactions() {
+        return transactions;
+    }
+
+    public User setTransactions(Set<Transaction> transactions) {
+        this.transactions = transactions;
         return this;
     }
 }
