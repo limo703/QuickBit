@@ -1,38 +1,35 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>Transaction</title>
-  <link rel="stylesheet" th:href="@{/css/styles.css}">
-  <script th:src="@{/js/transaction.js}"></script>
+  <title>Create Transaction</title>
+  <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-<div class="transaction-container">
-  <div class="wallet-info">
-    <h3>Your Wallet</h3>
-    <p>Balance: <span th:text="${wallet.getAmount()}"></span> <span th:text="${currency.name}"></span></p>
+<div class="container">
+  <h1>Create Transaction</h1>
+
+  <div class="currency-info">
+    <h3>Currency: <span th:text="${currency.name}">Currency Name</span></h3>
+    <p>Last Price: <span th:text="${lastPrice}">0.0000000</span></p>
+    <p>Operation Type: <span th:text="${typeOpp ? 'Buy' : 'Sell'}">Buy/Sell</span></p>
+    <p>Wallet Balance: <span th:text="${wallet.amount}">0.0000</span></p>
   </div>
 
-  <div class="price-info">
-    <h3>Transaction Details</h3>
-    <p>Last price: <span th:text="${lastPrice}"></span> <span th:text="USD"></span> per 1 <span th:text="${currency.name}"></span></p>
-  </div>
+  <form th:action="@{/transaction}" th:object="${transactionForm}" method="post" class="transaction-form">
+    <input type="hidden" th:field="*{currencyName}" th:value="${currency.name}"/>
+    <input type="hidden" th:field="*{typeOpp}" th:value="${typeOpp}"/>
 
-  <form th:action="@{/currency/transaction}" method="post" th:object="${transactionForm}">
     <div class="form-group">
-      <input type="hidden" name="currencyName" th:value="${currency.getName()}">
-      <input type="hidden" name="typeOpp" th:value="${typeOpp}">
-      <label for="amount">Amount to Purchase</label>
-      <input type="number" id="amount" name="amount" required min="0" step="0.01">
-      <label for="amount">Price</label>
-      <input type="number" id="price" name="price" required min="0" step="0.01">
+      <label for="price">Price</label>
+      <input type="text" id="price" th:field="*{price}" placeholder="Enter price" required/>
     </div>
 
     <div class="form-group">
-      <label for="total">Total Cost:</label>
-      <input type="text" id="total" name="total" readonly>
+      <label for="amount">Amount</label>
+      <input type="text" id="amount" th:field="*{amount}" placeholder="Enter amount" required/>
     </div>
 
-    <button type="submit">Confirm Purchase</button>
+    <button type="submit" class="btn btn-primary">Submit Transaction</button>
   </form>
 </div>
 </body>
