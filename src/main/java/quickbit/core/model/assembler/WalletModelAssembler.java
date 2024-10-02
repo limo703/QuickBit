@@ -28,7 +28,7 @@ public class WalletModelAssembler implements RepresentationModelAssembler<Wallet
 
         walletModel
             .setCurrency(currency.getName())
-            .setScore(entity.getAmount().doubleValue());
+            .setAmount(entity.getAmount().doubleValue());
 
         return walletModel;
     }

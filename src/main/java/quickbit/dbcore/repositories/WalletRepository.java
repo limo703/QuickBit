@@ -30,6 +30,7 @@ public interface WalletRepository extends JpaRepository<Wallet, Long> {
         "join Currency as c on w.currencyId = c.id " +
         "where w.userId = :userId " +
         "and c.isFiat = true " +
+        "and w.amount != 0" +
         ""
     )
     Set<Wallet> findAllFiatByUserId(@NotNull Long userId);
@@ -40,6 +41,7 @@ public interface WalletRepository extends JpaRepository<Wallet, Long> {
         "join Currency as c on w.currencyId = c.id " +
         "where w.userId = :userId " +
         "and c.isFiat = false " +
+        "and w.amount != 0" +
         ""
     )
     Set<Wallet> findAllNotFiatByUserId(@NotNull Long userId);

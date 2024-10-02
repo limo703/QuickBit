@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 public class Wallet extends UuidTimedEntity {
 
     private BigDecimal amount;
+    private BigDecimal reservedAmount;
     @Column(name = "currency_id", insertable = false, updatable = false)
     private Long currencyId;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -83,6 +84,15 @@ public class Wallet extends UuidTimedEntity {
 
     public Wallet setDefault(boolean aDefault) {
         isDefault = aDefault;
+        return this;
+    }
+
+    public BigDecimal getReservedAmount() {
+        return reservedAmount;
+    }
+
+    public Wallet setReservedAmount(BigDecimal reservedAmount) {
+        this.reservedAmount = reservedAmount;
         return this;
     }
 }

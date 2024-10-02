@@ -1,15 +1,5 @@
 package quickbit.core.controller;
 
-import quickbit.core.form.DepositForm;
-import quickbit.core.form.EditUserForm;
-import quickbit.core.model.AuthUser;
-import quickbit.core.model.UserModel;
-import quickbit.core.model.assembler.UserModelAssembler;
-import quickbit.core.service.ImageService;
-import quickbit.core.service.UserService;
-import quickbit.core.service.WalletService;
-import quickbit.core.validator.DepositFormValidator;
-import quickbit.core.util.RedirectUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -24,6 +14,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+import quickbit.core.form.EditUserForm;
+import quickbit.core.model.AuthUser;
+import quickbit.core.model.UserModel;
+import quickbit.core.model.assembler.UserModelAssembler;
+import quickbit.core.service.ImageService;
+import quickbit.core.service.UserService;
+import quickbit.core.service.WalletService;
+import quickbit.core.util.RedirectUtil;
+import quickbit.core.validator.DepositFormValidator;
 
 @Controller
 @RequestMapping("user/{username}")
@@ -65,6 +64,17 @@ public class UserController {
         return new ModelAndView("user/user")
             .addObject("userModel", userModel)
             .addObject("isCurrentUser", isCurrentUser);
+    }
+
+    @GetMapping("edit")
+    @PreAuthorize("@permissionService.check(#authUser, #userModel)")
+    public ModelAndView getEditUserPage(
+        UserModel userModel,
+        @AuthenticationPrincipal AuthUser authUser
+    ) {
+        return new ModelAndView("user/edit")
+            .addObject("userModel", userModel)
+            .addObject("editUserForm", new EditUserForm());
     }
 
     @PostMapping("update-avatar")

@@ -7,3 +7,6 @@ create table transaction
     currency_id     integer,
     type_opp        boolean
 );
+
+alter table wallet
+    add column reserved_amount numeric default 0;

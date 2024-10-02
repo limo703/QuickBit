@@ -37,7 +37,6 @@ public class CurrencyController {
 
     private final CurrencyService currencyService;
     private final WalletService walletService;
-    private final TransactionService transactionService;
     private final CurrencyModelAssembler currencyModelAssembler;
     private final WalletModelAssembler walletModelAssembler;
     private final CreateTransactionFormValidator createTransactionFormValidator;
@@ -46,14 +45,12 @@ public class CurrencyController {
     public CurrencyController(
         CurrencyService currencyService,
         WalletService walletService,
-        TransactionService transactionService,
         CurrencyModelAssembler currencyModelAssembler,
         WalletModelAssembler walletModelAssembler,
         CreateTransactionFormValidator createTransactionFormValidator
     ) {
         this.currencyService = currencyService;
         this.walletService = walletService;
-        this.transactionService = transactionService;
         this.currencyModelAssembler = currencyModelAssembler;
         this.walletModelAssembler = walletModelAssembler;
         this.createTransactionFormValidator = createTransactionFormValidator;

@@ -93,6 +93,8 @@ public class UserServiceImpl implements UserService {
             .setEmail(form.getEmail())
             .setUsername(form.getUsername())
             .setRole(UserRole.USER)
+            .setFirstName("")
+            .setLastName("")
             .setPassword(
                 passwordEncoder.encode(form.getPassword())
             );
@@ -102,7 +104,7 @@ public class UserServiceImpl implements UserService {
         Wallet wallet = new Wallet();
 
         wallet
-            .setAmount(BigDecimal.ZERO)
+            .setAmount(BigDecimal.TEN)
             .setCurrency(currencyService.getDefault())
             .setUser(newUser);
 

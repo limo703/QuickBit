@@ -9,7 +9,7 @@
 <div class="transaction-container">
   <div class="wallet-info">
     <h3>Your Wallet</h3>
-    <p>Balance: <span th:text="${wallet.getScore()}"></span> <span th:text="${currency.name}"></span></p>
+    <p>Balance: <span th:text="${wallet.getAmount()}"></span> <span th:text="${currency.name}"></span></p>
   </div>
 
   <div class="price-info">
@@ -35,17 +35,5 @@
     <button type="submit">Confirm Purchase</button>
   </form>
 </div>
-
-<script th:inline="javascript">
-  const purchasePrice = /*[[${lastPrice}]]*/ 0;
-  const sellCurrency = /*[[${currency.name}]]*/ '';
-
-  // Обновление стоимости на основе количества покупаемой валюты
-  document.getElementById('amount').addEventListener('input', function () {
-    const amount = parseFloat(this.value) || 0;
-    const total = amount * purchasePrice;
-    document.getElementById('total').value = total.toFixed(2) + ' ' + sellCurrency;
-  });
-</script>
 </body>
 </html>

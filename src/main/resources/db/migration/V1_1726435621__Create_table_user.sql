@@ -6,7 +6,7 @@ create table users
     password          varchar   not null,
     first_name        varchar,
     last_name         varchar,
-    role              varchar   not null,
+    role              varchar not null,
     avatar_image_id   integer,
     default_wallet_id integer,
 

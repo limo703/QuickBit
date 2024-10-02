@@ -19,14 +19,11 @@ public class CreateUserFormValidator implements Validator {
     private final static String PASSWORD_FIELD = "password";
     private final static String EMAIL_FIELD = "email";
     private final static String CONFIRM_PASSWORD_FIELD = "confirmPassword";
-    private final static String ERROR_USERNAME_IS_REQUIRED = "error.username.is.required";
-    private final static String ERROR_PASSWORD_IS_REQUIRED = "error.password.is.required";
-    private final static String ERROR_EMAIL_IS_REQUIRED = "error.email.is.required";
     private final static String ERROR_PASSWORD_DO_NOT_MATCH = "error.password.do.not.match";
     private final static String ERROR_USERNAME_ALREADY_USE = "error.username.already.use";
     private final static String ERROR_USERNAME_LENGTH = "error.username.length";
-    private final static String ERROR_EMAIL_FORMAT = "error.username.format";
     private final static String ERROR_EMAIL_ALREADY_USE = "error.email.already.use";
+    private final static String ERROR_IS_EMPTY = "error.is.empty";
 
     private final UserService userService;
 
@@ -45,15 +42,15 @@ public class CreateUserFormValidator implements Validator {
         CreateUserForm form = (CreateUserForm) target;
 
         if (StringUtils.isBlank(form.getUsername())) {
-            errors.rejectValue(USERNAME_FIELD, ERROR_USERNAME_IS_REQUIRED);
+            errors.rejectValue(USERNAME_FIELD, ERROR_IS_EMPTY);
         }
 
         if (StringUtils.isBlank(form.getPassword())) {
-            errors.rejectValue(PASSWORD_FIELD, ERROR_PASSWORD_IS_REQUIRED);
+            errors.rejectValue(PASSWORD_FIELD, ERROR_IS_EMPTY);
         }
 
         if (StringUtils.isBlank(form.getEmail())) {
-            errors.rejectValue(EMAIL_FIELD, ERROR_EMAIL_IS_REQUIRED);
+            errors.rejectValue(EMAIL_FIELD, ERROR_IS_EMPTY);
         }
 
         if (!Objects.equals(form.getPassword(), form.getConfirmPassword())) {
@@ -69,7 +66,7 @@ public class CreateUserFormValidator implements Validator {
         }
 
         if (!EmailValidator.getInstance().isValid(form.getEmail())) {
-            errors.rejectValue(EMAIL_FIELD, ERROR_EMAIL_FORMAT);
+            errors.rejectValue(EMAIL_FIELD, ERROR_IS_EMPTY);
         }
 
         if (Objects.nonNull(userService.getByEmail(form.getEmail()))) {

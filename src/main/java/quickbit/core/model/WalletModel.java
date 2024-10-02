@@ -4,17 +4,9 @@ import org.springframework.hateoas.RepresentationModel;
 
 public class WalletModel extends RepresentationModel<WalletModel> {
 
-    private Double score;
+    private Double amount;
+    private Double reservedAmount;
     private String currency;
-
-    public Double getScore() {
-        return score;
-    }
-
-    public WalletModel setScore(Double score) {
-        this.score = score;
-        return this;
-    }
 
     public String getCurrency() {
         return currency;
@@ -24,4 +16,24 @@ public class WalletModel extends RepresentationModel<WalletModel> {
         this.currency = currency;
         return this;
     }
+
+    public Double getAmount() {
+        return amount;
+    }
+
+    public WalletModel setAmount(Double amount) {
+        this.amount = amount;
+        return this;
+    }
+
+    public Double getReservedAmount() {
+        return reservedAmount;
+    }
+
+    public WalletModel setReservedAmount(Double reservedAmount) {
+        this.reservedAmount = reservedAmount;
+        return this;
+    }
+
+
 }

@@ -18,19 +18,19 @@
   <div class="currency-chart">
     <canvas th:attr="id='chart-' + ${currencyModel.name}" width="800" height="400"></canvas>
     <div class="currency-price">
-      <p>Цена: <span th:text="${price}"></span> $</p>
+      <p>Price: <span th:text="${price}"></span> $</p>
     </div>
   </div>
   <div class="currency-buttons">
     <form th:action="@{/currency/transaction}" method="get">
       <input type="hidden" name="typeOpp" value="1">
       <input type="hidden" name="currencyName" th:value="${currencyModel.getName()}">
-      <button class="currency-button buy" th:text="'Купить ' + ${currencyModel.name}"></button>
+      <button class="currency-button buy" th:text="'Purchase ' + ${currencyModel.name}"></button>
     </form>
     <form th:action="@{/currency/transaction}" method="get">
       <input type="hidden" name="typeOpp" value="0">
       <input type="hidden" name="currencyName" th:value="${currencyModel.getName()}">
-      <button class="currency-button sell" th:text="'Продать ' + ${currencyModel.name}"></button>
+      <button class="currency-button sell" th:text="'Sell ' + ${currencyModel.name}"></button>
     </form>
   </div>
 </div>
