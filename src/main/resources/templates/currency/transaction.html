@@ -15,7 +15,7 @@
     <p>Wallet Balance: <span th:text="${wallet.amount}">0.0000</span></p>
   </div>
 
-  <form th:action="@{/transaction}" th:object="${transactionForm}" method="post" class="transaction-form">
+  <form th:action="@{/currency/transaction}" th:object="${transactionForm}" method="post" class="transaction-form">
     <input type="hidden" th:field="*{currencyName}" th:value="${currency.name}"/>
     <input type="hidden" th:field="*{typeOpp}" th:value="${typeOpp}"/>
 
