@@ -5,6 +5,11 @@
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
+
+<div class="top-navbar">
+  <a href="/home" class="home-button">Домой</a>
+</div>
+
 <div class="container">
   <h1>Create Transaction</h1>
 
@@ -12,12 +17,12 @@
     <h3>Currency: <span th:text="${currency.name}">Currency Name</span></h3>
     <p>Last Price: <span th:text="${lastPrice}">0.0000000</span></p>
     <p>Operation Type: <span th:text="${typeOpp ? 'Buy' : 'Sell'}">Buy/Sell</span></p>
-    <p>Wallet Balance: <span th:text="${wallet.amount}">0.0000</span></p>
+    <p>Wallet Balance: <span th:text="${wallet.amount}">0.0000</span> <span th:text="${typeOpp ? 'USD' : currency.name}" /></p>
   </div>
 
   <form th:action="@{/currency/transaction}" th:object="${transactionForm}" method="post" class="transaction-form">
-    <input type="hidden" th:field="*{currencyName}" th:value="${currency.name}"/>
-    <input type="hidden" th:field="*{typeOpp}" th:value="${typeOpp}"/>
+    <input type="hidden" name="currencyName" th:value="${currency.name}"/>
+    <input type="hidden" name="typeOpp" th:value="${typeOpp}"/>
 
     <div class="form-group">
       <label for="price">Price</label>
