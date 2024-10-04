@@ -24,13 +24,13 @@ public class CurrencyPricesScheduler {
         this.currencyService = currencyService;
     }
 
-    @Scheduled(fixedDelay = 2 * 60 * 1000)
-    public void scheduledNotFiatCurrency() {
-        currencyService.updateNotFiatCurrency();
-    }
-
-    @Scheduled(fixedDelay = 10 * 60 * 1000)
-    public void scheduledFiatCurrency() {
-        currencyService.updateFiatCurrency();
-    }
+//    @Scheduled(fixedDelay = 2 * 60 * 1000)
+//    public void scheduledNotFiatCurrency() {
+//        currencyService.updateNotFiatCurrency();
+//    }
+//
+//    @Scheduled(fixedDelay = 10 * 60 * 1000)
+//    public void scheduledFiatCurrency() {
+//        currencyService.updateFiatCurrency();
+//    }
 }

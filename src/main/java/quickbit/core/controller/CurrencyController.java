@@ -35,29 +35,15 @@ import java.math.RoundingMode;
 public class CurrencyController {
 
     private final CurrencyService currencyService;
-    private final WalletService walletService;
     private final CurrencyModelAssembler currencyModelAssembler;
-    private final WalletModelAssembler walletModelAssembler;
-    private final CreateTransactionFormValidator createTransactionFormValidator;
 
     @Autowired
     public CurrencyController(
         CurrencyService currencyService,
-        WalletService walletService,
-        CurrencyModelAssembler currencyModelAssembler,
-        WalletModelAssembler walletModelAssembler,
-        CreateTransactionFormValidator createTransactionFormValidator
+        CurrencyModelAssembler currencyModelAssembler
     ) {
         this.currencyService = currencyService;
-        this.walletService = walletService;
         this.currencyModelAssembler = currencyModelAssembler;
-        this.walletModelAssembler = walletModelAssembler;
-        this.createTransactionFormValidator = createTransactionFormValidator;
-    }
-
-    @InitBinder("createTransactionForm")
-    public void initCreateTransactionFormBinder(WebDataBinder binder) {
-        binder.addValidators(createTransactionFormValidator);
     }
 
     @GetMapping("{currencyName}")

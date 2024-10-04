@@ -8,7 +8,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +26,7 @@ import quickbit.core.service.CurrencyService;
 import quickbit.core.service.TransactionService;
 import quickbit.core.service.WalletService;
 import quickbit.core.util.RedirectUtil;
+import quickbit.core.validator.CreateTransactionFormValidator;
 import quickbit.dbcore.entity.Currency;
 import quickbit.dbcore.entity.Transaction;
 import quickbit.dbcore.entity.User;
@@ -44,6 +47,7 @@ public class TransactionController {
     private final CurrencyModelAssembler currencyModelAssembler;
     private final WalletModelAssembler walletModelAssembler;
     private final TransactionModelAssembler transactionModelAssembler;
+    private final CreateTransactionFormValidator createTransactionFormValidator;
 
     @Autowired
     public TransactionController(
@@ -52,7 +56,8 @@ public class TransactionController {
         TransactionService transactionService,
         CurrencyModelAssembler currencyModelAssembler,
         WalletModelAssembler walletModelAssembler,
-        TransactionModelAssembler transactionModelAssembler
+        TransactionModelAssembler transactionModelAssembler,
+        CreateTransactionFormValidator createTransactionFormValidator
     ) {
         this.currencyService = currencyService;
         this.walletService = walletService;
@@ -60,8 +65,13 @@ public class TransactionController {
         this.currencyModelAssembler = currencyModelAssembler;
         this.walletModelAssembler = walletModelAssembler;
         this.transactionModelAssembler = transactionModelAssembler;
+        this.createTransactionFormValidator = createTransactionFormValidator;
     }
 
+    @InitBinder("createTransactionForm")
+    public void initCreateTransactionFormBinder(WebDataBinder binder) {
+        binder.addValidators(createTransactionFormValidator);
+    }
 
     @GetMapping("create")
     @PreAuthorize("@permissionService.check(#authUser)")
