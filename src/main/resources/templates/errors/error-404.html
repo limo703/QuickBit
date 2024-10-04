@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 - Not Found</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Arial', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #ffcc33, #ff6699);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      text-align: center;
+      padding: 20px;
+      border-radius: 15px;
+      background-color: rgba(255, 255, 255, 0.8);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      max-width: 600px;
+      width: 90%;
+    }
+
+    .error-page h1 {
+      font-size: 10rem;
+      color: #ff4444;
+      margin-bottom: 10px;
+    }
+
+    .error-page h2 {
+      font-size: 2.5rem;
+      color: #333333;
+      margin-bottom: 20px;
+    }
+
+    .error-description {
+      font-size: 1.2rem;
+      color: #666666;
+      margin-bottom: 30px;
+    }
+
+    .back-home-button {
+      display: inline-block;
+      padding: 12px 25px;
+      background-color: #ff4444;
+      color: #ffffff;
+      text-decoration: none;
+      border-radius: 30px;
+      transition: background-color 0.3s ease;
+      font-size: 1.1rem;
+    }
+
+    .back-home-button:hover {
+      background-color: #ff9900;
+      cursor: pointer;
+    }
+
+    .animation-container {
+      margin-top: 30px;
+      animation: bounce 2s infinite;
+    }
+
+    .funny-image {
+      width: 150px;
+      height: auto;
+    }
+
+    @keyframes bounce {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="error-page">
+    <h1 class="error-code">404</h1>
+    <h2 class="error-message">Oops! Page Not Found</h2>
+    <p class="error-description" th:text="${message}">
+      Sorry, the page you are looking for doesn't exist or has been moved.
+    </p>
+    <a href="/home" class="back-home-button">Go Back Home</a>
+    <div class="animation-container">
+      <img src="path_to_your_funny_image.png" alt="Funny Image" class="funny-image">
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
