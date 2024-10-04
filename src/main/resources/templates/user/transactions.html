@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User Transactions</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div th:insert="fragments/navbar :: navbar"></div>
+
+<h1 class="transaction-title">User Transactions</h1>
+
+<table class="transaction-table">
+    <thead>
+    <tr>
+        <th>Operation Type</th>
+        <th>Currency</th>
+        <th>Transaction Amount</th>
+        <th>Operation Price</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="transaction : ${transactions}">
+        <td th:text="${transaction.typeOpp ? 'Buy' : 'Sell'}"></td>
+        <td th:text="${transaction.currencyName}"></td>
+        <td th:text="${transaction.amount}"></td>
+        <td th:text="${transaction.operationPrice}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<div class="pagination-unique">
+    <span th:if="${transactions.hasPrevious()}">
+        <a class="pagination-link-unique" th:href="@{|transactions?page=${transactions.number - 1}|}">Previous</a>
+    </span>
+    <span th:each="i : ${#numbers.sequence(1, transactions.totalPages)}">
+        <a class="pagination-link-unique" th:href="@{|transactions?page=${i - 1}|}" th:classappend="${i == transactions.number + 1} ? 'active'" th:text="${i}"></a>
+    </span>
+    <span th:if="${transactions.hasNext()}">
+        <a class="pagination-link-unique" th:href="@{|transactions?page=${transactions.number + 1}|}">Next</a>
+    </span>
+</div>
+
+</body>
+</html>

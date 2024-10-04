@@ -6,9 +6,7 @@
 </head>
 <body>
 
-<div class="top-navbar">
-  <a href="/home" class="home-button">Домой</a>
-</div>
+<div th:insert="fragments/navbar :: navbar"></div>
 
 <div class="container">
   <h1>Create Transaction</h1>
@@ -20,7 +18,7 @@
     <p>Wallet Balance: <span th:text="${wallet.amount}">0.0000</span> <span th:text="${typeOpp ? 'USD' : currency.name}" /></p>
   </div>
 
-  <form th:action="@{/currency/transaction}" th:object="${transactionForm}" method="post" class="transaction-form">
+  <form th:action="@{/transaction/create}" th:object="${transactionForm}" method="post" class="transaction-form">
     <input type="hidden" name="currencyName" th:value="${currency.name}"/>
     <input type="hidden" name="typeOpp" th:value="${typeOpp}"/>
 

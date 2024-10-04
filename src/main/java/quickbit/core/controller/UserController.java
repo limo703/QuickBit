@@ -1,6 +1,9 @@
 package quickbit.core.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -17,12 +20,15 @@ import org.springframework.web.servlet.ModelAndView;
 import quickbit.core.form.EditUserForm;
 import quickbit.core.model.AuthUser;
 import quickbit.core.model.UserModel;
+import quickbit.core.model.assembler.TransactionModelAssembler;
 import quickbit.core.model.assembler.UserModelAssembler;
 import quickbit.core.service.ImageService;
+import quickbit.core.service.TransactionService;
 import quickbit.core.service.UserService;
 import quickbit.core.service.WalletService;
 import quickbit.core.util.RedirectUtil;
 import quickbit.core.validator.DepositFormValidator;
+import quickbit.dbcore.entity.Transaction;
 
 @Controller
 @RequestMapping("user/{username}")
@@ -30,22 +36,23 @@ public class UserController {
 
     private final UserService userService;
     private final ImageService imageService;
-    private final UserModelAssembler assembler;
-    private final WalletService walletService;
+    private final TransactionService transactionService;
     private final DepositFormValidator depositFormValidator;
+    private final TransactionModelAssembler transactionModelAssembler;
 
     @Autowired
     public UserController(
         UserService userService,
         ImageService imageService,
-        UserModelAssembler assembler, WalletService walletService,
-        DepositFormValidator depositFormValidator
+        TransactionService transactionService,
+        DepositFormValidator depositFormValidator,
+        TransactionModelAssembler transactionModelAssembler
     ) {
         this.userService = userService;
         this.imageService = imageService;
-        this.assembler = assembler;
-        this.walletService = walletService;
+        this.transactionService = transactionService;
         this.depositFormValidator = depositFormValidator;
+        this.transactionModelAssembler = transactionModelAssembler;
     }
 
     @InitBinder("depositUserForm")
@@ -98,5 +105,19 @@ public class UserController {
     ) {
         userService.editUser(editUserForm, authUser.getUser().getId());
         return RedirectUtil.redirect("/user/" + authUser.getUser().getUsername());
+    }
+
+    @GetMapping("transactions")
+    @PreAuthorize("@permissionService.check(#authUser)")
+    public ModelAndView transactions(
+        UserModel userModel,
+        @AuthenticationPrincipal AuthUser authUser,
+        @PageableDefault Pageable pageable
+    ) {
+        Page<Transaction> transactions = transactionService.findAllByUserId(authUser.getUser().getId(), pageable);
+
+        return new ModelAndView("user/transactions")
+            .addObject("transactions", transactionModelAssembler.toModels(transactions))
+            .addObject("userModel", userModel);
     }
 }

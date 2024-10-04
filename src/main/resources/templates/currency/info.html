@@ -8,9 +8,9 @@
   <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}">
 </head>
 <body>
-<div class="top-navbar">
-  <a href="/home" class="home-button">Домой</a>
-</div>
+
+<div th:insert="fragments/navbar :: navbar"></div>
+
 <div class="currency-chart-container">
   <h3>
     <a th:href="@{/currency/{name}(name=${currencyModel.name})}" th:text="${currencyModel.name}"></a>
@@ -22,12 +22,12 @@
     </div>
   </div>
   <div class="currency-buttons">
-    <form th:action="@{/currency/transaction}" method="get">
+    <form th:action="@{/transaction/create}" method="get">
       <input type="hidden" name="typeOpp" value="1">
       <input type="hidden" name="currencyName" th:value="${currencyModel.getName()}">
       <button class="currency-button buy" th:text="'Purchase ' + ${currencyModel.name}"></button>
     </form>
-    <form th:action="@{/currency/transaction}" method="get">
+    <form th:action="@{/transaction/create}" method="get">
       <input type="hidden" name="typeOpp" value="0">
       <input type="hidden" name="currencyName" th:value="${currencyModel.getName()}">
       <button class="currency-button sell" th:text="'Sell ' + ${currencyModel.name}"></button>

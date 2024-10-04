@@ -283,21 +283,38 @@ h1 {
     margin-bottom: 20px; /* Отступ снизу, если нужно */
 }
 
-.home-button {
+.transactions-button {
     display: inline-block;
     padding: 10px 20px;
-    background-color: #28a745; /* Цвет фона кнопки */
+    background-color: #4e6988; /* Цвет фона кнопки */
     color: white; /* Цвет текста */
     text-align: center;
     border-radius: 8px;
     text-decoration: none;
     transition: background-color 0.3s;
-    margin-right: 40px; /* Отступ справа */
+    margin-right: 16%; /* Отступ справа */
+    position: fixed;
+}
+
+.transactions-button:hover {
+    background-color: #34495e; /* Более тёмный цвет при наведении */
+}
+
+.home-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #4e6988; /* Цвет фона кнопки */
+    color: white; /* Цвет текста */
+    text-align: center;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+    margin-right: 10%; /* Отступ справа */
     position: fixed;
 }
 
 .home-button:hover {
-    background-color: #218838; /* Более тёмный цвет при наведении */
+    background-color: #34495e; /* Более тёмный цвет при наведении */
 }
 
 /* Основные стили */
@@ -552,21 +569,6 @@ canvas {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.top-navbar a.home-button {
-    background-color: #777; /* Серый цвет кнопки */
-    color: white;
-    text-decoration: none;
-    font-size: 18px;
-    padding: 10px 20px;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-    margin-right: 10%;
-}
-
-.top-navbar a.home-button:hover {
-    background-color: #555; /* Темно-серый при наведении */
-}
-
 /* Отступ для основного контента */
 .page-content {
     margin-top: 60px; /* Чтобы контент не пересекался с фиксированной панелью */
@@ -744,4 +746,84 @@ span:last-child {
 .crypto-wallet-info-container li {
     font-size: 14px;
     margin-bottom: 5px;
+}
+
+.top-navbar-unique {
+    background-color: #2c3e50;
+    padding: 10px 0;
+    text-align: center;
+}
+
+.top-navbar-unique a.navbar-link-unique {
+    color: white;
+    padding: 14px 20px;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+.top-navbar-unique a.navbar-link-unique:hover {
+    background-color: #34495e;
+    transition: 0.3s;
+}
+
+/* Стили для таблицы с уникальными классами */
+.transaction-table {
+    width: 80%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.transaction-table th, .transaction-table td {
+    padding: 10px 20px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.transaction-table th {
+    background-color: #3498db;
+    color: white;
+    font-weight: bold;
+}
+
+.transaction-table tr:hover {
+    background-color: #ecf0f1;
+}
+
+.transaction-table tr:nth-child(even) {
+    background-color: #f5f5f5;
+}
+
+/* Стили для пагинации с уникальными классами */
+.pagination-unique {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.pagination-unique a.pagination-link-unique {
+    color: #3498db;
+    padding: 8px 16px;
+    margin: 0 4px;
+    text-decoration: none;
+    border: 1px solid #3498db;
+    border-radius: 4px;
+}
+
+.pagination-unique a.pagination-link-unique:hover {
+    background-color: #3498db;
+    color: white;
+    transition: 0.3s;
+}
+
+.pagination-unique a.active {
+    background-color: #3498db;
+    color: white;
+    border: none;
+}
+
+h1.transaction-title {
+    text-align: center;
+    color: #2c3e50;
+    margin-top: 20px;
 }

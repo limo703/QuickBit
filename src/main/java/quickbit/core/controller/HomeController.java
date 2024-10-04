@@ -34,37 +34,31 @@ public class HomeController {
 
     private final CurrencyService currencyService;
     private final WalletService walletService;
-    private final TransactionService transactionService;
     private final NewsService newsService;
     private final UserModelAssembler userModelAssembler;
     private final WalletModelAssembler walletModelAssembler;
     private final CurrencyModelAssembler currencyModelAssembler;
-    private final TransactionModelAssembler transactionModelAssembler;
 
     @Autowired
     public HomeController(
         CurrencyService currencyService,
         WalletService walletService,
-        TransactionService transactionService,
         NewsService newsService,
         UserModelAssembler userModelAssembler,
         WalletModelAssembler walletModelAssembler,
-        CurrencyModelAssembler currencyModelAssembler,
-        TransactionModelAssembler transactionModelAssembler
+        CurrencyModelAssembler currencyModelAssembler
     ) {
-        this.transactionService = transactionService;
         this.newsService = newsService;
         this.currencyService = currencyService;
         this.walletService = walletService;
         this.userModelAssembler = userModelAssembler;
         this.walletModelAssembler = walletModelAssembler;
         this.currencyModelAssembler = currencyModelAssembler;
-        this.transactionModelAssembler = transactionModelAssembler;
     }
 
     @GetMapping()
     @PreAuthorize("@permissionService.check(#authUser)")
-    public ModelAndView home(
+    public ModelAndView homePage(
         @AuthenticationPrincipal AuthUser authUser,
         @PageableDefault Pageable pageable
     ) {
@@ -82,17 +76,5 @@ public class HomeController {
             .addObject("fiatWallets", walletModelAssembler.toCollectionModel(fiatWallets))
             .addObject("currencyModels", criptoCurrencies)
             .addObject("newsModels", newsModels);
-    }
-
-    @GetMapping("transactions")
-    @PreAuthorize("@permissionService.check(#authUser)")
-    public ModelAndView transactions(
-        @AuthenticationPrincipal AuthUser authUser,
-        @PageableDefault Pageable pageable
-    ) {
-        Page<Transaction> transactions = transactionService.findAllByUserId(authUser.getUser().getId(), pageable);
-
-        return new ModelAndView("transactions")
-            .addObject("transactions", transactionModelAssembler.toModels(transactions));
     }
 }

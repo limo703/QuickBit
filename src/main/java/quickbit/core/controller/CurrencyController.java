@@ -19,7 +19,6 @@ import quickbit.core.model.AuthUser;
 import quickbit.core.model.assembler.CurrencyModelAssembler;
 import quickbit.core.model.assembler.WalletModelAssembler;
 import quickbit.core.service.CurrencyService;
-import quickbit.core.service.TransactionService;
 import quickbit.core.service.WalletService;
 import quickbit.core.util.RedirectUtil;
 import quickbit.core.validator.CreateTransactionFormValidator;
@@ -74,41 +73,4 @@ public class CurrencyController {
             .addObject("currencyModel", currencyModelAssembler.toModel(currency))
             .addObject("price", price.round(new MathContext(7, RoundingMode.HALF_UP)));
     }
-
-    @GetMapping("transaction")
-    @PreAuthorize("@permissionService.check(#authUser)")
-    public ModelAndView createTransactionPage(
-        @RequestParam("currencyName") String currencyName,
-        @RequestParam("typeOpp") boolean type,
-        @AuthenticationPrincipal AuthUser authUser
-    ) {
-        User user = authUser.getUser();
-        Currency currency = currencyService.getByName(currencyName);
-        Currency defaultCurrency = currencyService.getDefault();
-
-        Wallet wallet = walletService.getOrCreate(user, currency);
-        Wallet defaultWallet = walletService.getOrCreate(user, defaultCurrency);
-
-        wallet = type ? defaultWallet : wallet;
-        BigDecimal price = currencyService.getLastPrice(currency.getId());
-
-        return new ModelAndView("currency/transaction")
-            .addObject("currency", currencyModelAssembler.toModel(currency))
-            .addObject("typeOpp", type)
-            .addObject("lastPrice", price.round( new MathContext(7, RoundingMode.HALF_UP)))
-            .addObject("wallet", walletModelAssembler.toModel(wallet))
-            .addObject("transactionForm", new CreateTransactionForm());
-    }
-
-    @PostMapping("transaction")
-    @PreAuthorize("@permissionService.check(#authUser)")
-    public ModelAndView createTransaction(
-        @Validated @ModelAttribute("createTransactionForm")
-        CreateTransactionForm createTransactionForm,
-        @AuthenticationPrincipal AuthUser authUser
-    ) {
-        walletService.processingTransaction(createTransactionForm, authUser.getUser());
-        return RedirectUtil.redirect("/home");
-    }
-
 }
