@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import quickbit.core.exception.WalletNotFoundException;
 import quickbit.core.form.CreateTransactionForm;
 import quickbit.core.form.DepositForm;
+import quickbit.core.form.ExchangeCurrenciesForm;
+import quickbit.core.util.QuickBitUtil;
 import quickbit.dbcore.entity.Currency;
 import quickbit.dbcore.entity.Transaction;
 import quickbit.dbcore.entity.User;
@@ -132,7 +134,7 @@ public class WalletServiceImpl implements WalletService {
                             .setAmount(revTransactionAmount)
                             .setTypeOpp(revTransaction.getTypeOpp())
                             .setCurrencyId(revTransaction.getCurrencyId())
-                        );
+                    );
                 }
                 break;
             }
@@ -245,6 +247,40 @@ public class WalletServiceImpl implements WalletService {
     ) {
         return walletRepository.findByUserIdAndCurrencyId(userId, currencyId)
             .orElseThrow(EntityNotFoundException::new);
+    }
+
+    @Override
+    public Optional<Wallet> findWalletByUserIdAndCurrencyId(
+        @NotNull Long userId,
+        @NotNull Long currencyId
+    ) {
+        return walletRepository.findByUserIdAndCurrencyId(userId, currencyId);
+    }
+
+    @Override
+    public void exchange(
+        @NotNull Long userId,
+        @NotNull ExchangeCurrenciesForm form
+    ) {
+        Currency fromCurrency = currencyService.getByName(form.getFromCurrency());
+        Currency toCurrency = currencyService.getByName(form.getToCurrency());
+
+        Wallet fromWallet = getWalletByUserIdAndCurrencyId(userId, fromCurrency.getId());
+        Wallet toWallet = getWalletByUserIdAndCurrencyId(userId, toCurrency.getId());
+
+        BigDecimal newFromAmount = fromWallet.getAmount().subtract(BigDecimal.valueOf(form.getAmount()));
+
+        BigDecimal toDifference = QuickBitUtil.convert(
+            BigDecimal.valueOf(form.getAmount()),
+            currencyService.getLastPrice(fromCurrency.getId()),
+            currencyService.getLastPrice(toCurrency.getId())
+        );
+        BigDecimal newToAmount = toWallet.getAmount().add(toDifference);
+
+        walletRepository.saveAll(Set.of(
+            fromWallet.setAmount(newFromAmount),
+            toWallet.setAmount(newToAmount)
+        ));
     }
 
     @Override

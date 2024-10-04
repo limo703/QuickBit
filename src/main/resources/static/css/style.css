@@ -292,11 +292,28 @@ h1 {
     border-radius: 8px;
     text-decoration: none;
     transition: background-color 0.3s;
-    margin-right: 16%; /* Отступ справа */
+    margin-right: 6.37%; /* Отступ справа */
     position: fixed;
 }
 
 .transactions-button:hover {
+    background-color: #34495e; /* Более тёмный цвет при наведении */
+}
+
+.wallet-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #4e6988; /* Цвет фона кнопки */
+    color: white; /* Цвет текста */
+    text-align: center;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+    margin-right: 17%; /* Отступ справа */
+    position: fixed;
+}
+
+.wallet-button:hover {
     background-color: #34495e; /* Более тёмный цвет при наведении */
 }
 
@@ -309,7 +326,7 @@ h1 {
     border-radius: 8px;
     text-decoration: none;
     transition: background-color 0.3s;
-    margin-right: 10%; /* Отступ справа */
+    margin-right: 1%; /* Отступ справа */
     position: fixed;
 }
 
@@ -333,7 +350,8 @@ body {
 
 .payment-container {
     max-width: 600px;
-    margin: 50px auto;
+    margin-left: 10%;
+    margin-top: 5%;
     padding: 40px;
     background-color: #2c3e50;
     border-radius: 15px;
@@ -827,3 +845,55 @@ h1.transaction-title {
     color: #2c3e50;
     margin-top: 20px;
 }
+
+.wallet-exchange-container {
+    max-width: 600px;
+    padding: 40px;
+    background-color: #ededed;
+    border-radius: 15px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    border: 2px solid #4e6988;
+    text-align: center;
+    margin-left: 55%;
+    margin-top: -37%;
+}
+
+.wallet-exchange-container input{
+    margin-bottom: 20px;
+}
+
+.wallet-exchange-container table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 18px;
+    font-family: 'Arial', sans-serif;
+}
+
+.wallet-exchange-container th,
+.wallet-exchange-container td {
+    padding: 12px 15px;
+    border: 1px solid #4e6988;
+    text-align: center;
+}
+
+.wallet-exchange-container th {
+    background-color: #4e6988;
+    color: white;
+    font-weight: bold;
+}
+
+.wallet-exchange-container tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.wallet-exchange-container td {
+    color: #333;
+}
+
+.wallet-exchange-container td.highlight {
+    background-color: #ffeb3b;
+    font-weight: bold;
+    color: #333;
+}
+

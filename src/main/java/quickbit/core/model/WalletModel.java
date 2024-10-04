@@ -6,13 +6,13 @@ public class WalletModel extends RepresentationModel<WalletModel> {
 
     private Double amount;
     private Double reservedAmount;
-    private String currency;
+    private SimpleCurrencyModel currency;
 
-    public String getCurrency() {
+    public SimpleCurrencyModel getCurrency() {
         return currency;
     }
 
-    public WalletModel setCurrency(String currency) {
+    public WalletModel setCurrency(SimpleCurrencyModel currency) {
         this.currency = currency;
         return this;
     }

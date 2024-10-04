@@ -13,10 +13,15 @@ import org.springframework.stereotype.Component;
 public class WalletModelAssembler implements RepresentationModelAssembler<Wallet, WalletModel> {
 
     private final CurrencyService currencyService;
+    private final SimpleCurrencyModelAssembler simpleCurrencyModelAssembler;
 
     @Autowired
-    public WalletModelAssembler(CurrencyService currencyService) {
+    public WalletModelAssembler(
+        CurrencyService currencyService,
+        SimpleCurrencyModelAssembler simpleCurrencyModelAssembler
+    ) {
         this.currencyService = currencyService;
+        this.simpleCurrencyModelAssembler = simpleCurrencyModelAssembler;
     }
 
     @NotNull
@@ -27,8 +32,10 @@ public class WalletModelAssembler implements RepresentationModelAssembler<Wallet
         Currency currency = currencyService.getById(entity.getCurrencyId());
 
         walletModel
-            .setCurrency(currency.getName())
-            .setAmount(entity.getAmount().doubleValue());
+            .setAmount(entity.getAmount().doubleValue())
+            .setCurrency(
+                simpleCurrencyModelAssembler.toModel(currency)
+            );
 
         return walletModel;
     }

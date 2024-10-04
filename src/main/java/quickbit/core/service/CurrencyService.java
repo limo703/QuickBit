@@ -8,6 +8,7 @@ import quickbit.dbcore.entity.CurrencyPrice;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -22,6 +23,7 @@ public interface CurrencyService {
     List<Currency> findAll();
 
     Page<Currency> findAll(@NotNull Pageable pageable);
+
 
     List<Currency> findAllFiat();
 

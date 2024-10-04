@@ -80,7 +80,7 @@
     <ul>
         <li th:each="wallet : ${fiatWallets}">
             <a th:href="@{/wallet}" class="plain-link">
-                <span th:text="${wallet.currency}"></span> <span th:text="${wallet.amount}"></span>
+                <span th:text="${wallet.currency.name}"></span> <span th:text="${wallet.amount}"></span>
             </a>
         </li>
     </ul>
@@ -91,7 +91,7 @@
     <ul>
         <li th:each="wallet : ${wallets}">
             <a th:href="@{/currency/{name}(name = ${wallet.getCurrency()})}" class="plain-link">
-                <span th:text="${wallet.currency}"></span> <span th:text="${wallet.amount}"></span>
+                <span th:text="${wallet.currency.name}"></span> <span th:text="${wallet.amount}"></span>
             </a>
         </li>
     </ul>

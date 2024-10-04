@@ -1,8 +1,6 @@
 package quickbit.core.service;
 
-import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
 import com.sun.istack.NotNull;
 import org.apache.http.client.utils.URIBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +20,11 @@ import quickbit.dbcore.repositories.CurrencyPriceRepository;
 import quickbit.dbcore.repositories.CurrencyRepository;
 
 import javax.persistence.EntityNotFoundException;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -216,7 +214,7 @@ public class CurrencyServiceImpl implements CurrencyService {
 
             newPrices.add(
                 new CurrencyPrice()
-                    .setPrice(BigDecimal.valueOf(1/price))
+                    .setPrice(BigDecimal.valueOf(1 / price))
                     .setCurrency(currency)
                     .setCurrencyId(currency.getId())
             );

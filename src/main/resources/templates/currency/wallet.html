@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Replenishment of balance</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<div class="payment-container">
+    <div class="header">
+        <h1>Replenishment of balance</h1>
+    </div>
+
+    <div class="form-container">
+        <form action="#" th:action="@{/wallet/deposit}" method="post">
+            <div class="form-group">
+                <label for="currency">Select currency:</label>
+                <select id="currency" name="currency" required>
+                    <option value="USD" th:selected="${wallet.currency == 'USD'}">USD</option>
+                    <option value="EUR" th:selected="${wallet.currency == 'EUR'}">EUR</option>
+                    <option value="RUB" th:selected="${wallet.currency == 'RUB'}">RUB</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="depAmount">Enter amount:</label>
+                <input type="number" id="depAmount" name="amount" min="1" step="0.01" placeholder="Enter amount" required>
+            </div>
+
+            <button type="submit" class="btn submit-btn">Top up</button>
+        </form>
+    </div>
+
+    <div class="current-balance">
+        <h2>Current balance</h2>
+        <p th:text="'Score: ' + ${wallet.amount} + ' ' + ${wallet.currency.name}">Score: 0 Currency</p>
+    </div>
+</div>
+
+<div th:insert="fragments/navbar :: navbar"></div>
+
+<div class="wallet-exchange-container">
+    <h1>Currency Exchange</h1>
+
+    <h2>Your Wallets</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Currency</th>
+            <th>Amount</th>
+            <th>Last Price</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="wallet : ${wallets}">
+            <td th:text="${wallet.currency.name}"></td>
+            <td th:text="${wallet.amount}"></td>
+            <td th:text="${wallet.currency.lastPrice}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h2>Select Currency to Exchange</h2>
+    <form th:action="@{/wallet/exchange}" method="post">
+        <label for="fromCurrency">From Currency:</label>
+        <select id="fromCurrency" name="fromCurrency">
+            <option th:each="currency : ${currencies}" th:value="${currency.name}" th:text="${currency.name}"></option>
+        </select>
+
+        <label for="toCurrency">To Currency:</label>
+        <select id="toCurrency" name="toCurrency">
+            <option th:each="currency : ${currencies}" th:value="${currency.name}" th:text="${currency.name}"></option>
+        </select>
+
+        <label for="amount">Amount:</label>
+        <input type="number" id="amount" name="amount" min="0" step="0.01" required>
+        <button type="submit">Exchange</button>
+    </form>
+</div>
+
+</body>
+</html>
