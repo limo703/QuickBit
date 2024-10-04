@@ -7,6 +7,7 @@ public class UserModel extends RepresentationModel<UserModel> {
     private String username;
     private String firstName;
     private String lastName;
+    private String email;
     private WalletModel wallet;
     private String uuid;
     private String avatarUuid;
@@ -71,6 +72,15 @@ public class UserModel extends RepresentationModel<UserModel> {
 
     public UserModel setAvatarUuid(String avatarUuid) {
         this.avatarUuid = avatarUuid;
+        return this;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public UserModel setEmail(String email) {
+        this.email = email;
         return this;
     }
 }

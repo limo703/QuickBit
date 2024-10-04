@@ -1,6 +1,7 @@
 package quickbit.core.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.hateoas.PagedModel;
@@ -58,8 +59,8 @@ public class HomeController {
         @AuthenticationPrincipal AuthUser authUser,
         @PageableDefault Pageable pageable
     ) {
-        PagedModel<CurrencyModel> criptoCurrencies =
-            currencyModelAssembler.toPagedModel(currencyService.findAllNotFiat(pageable));
+        Page<CurrencyModel> criptoCurrencies =
+            currencyModelAssembler.toModels(currencyService.findAllNotFiat(pageable));
 
         Set<Wallet> fiatWallets = walletService.findAllFiatWallets(authUser.getUser().getId());
         Set<Wallet> wallets = walletService.findAllNonFiatWallets(authUser.getUser().getId());

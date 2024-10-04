@@ -3,21 +3,26 @@ package quickbit.core.model.assembler;
 import com.sun.istack.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 import quickbit.core.model.CurrencyModel;
+import quickbit.core.model.UserModel;
 import quickbit.core.service.CurrencyService;
 import quickbit.core.service.ImageService;
 import quickbit.dbcore.entity.Currency;
 import quickbit.dbcore.entity.CurrencyPrice;
+import quickbit.dbcore.entity.User;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 @Component
 public class CurrencyModelAssembler implements RepresentationModelAssembler<Currency, CurrencyModel> {
@@ -64,14 +69,11 @@ public class CurrencyModelAssembler implements RepresentationModelAssembler<Curr
         return model;
     }
 
-    public PagedModel<CurrencyModel> toPagedModel(Page<Currency> users) {
-        return PagedModel.of(
-            users.map(this::toModel).getContent(),
-            new PagedModel.PageMetadata(
-                users.getSize(),
-                users.getNumber(),
-                users.getTotalElements()
-            )
-        );
+    public Page<CurrencyModel> toModels(Page<? extends Currency> entities) {
+        List<CurrencyModel> currencyModels = entities.stream()
+            .map(this::toModel)
+            .collect(Collectors.toList());
+
+        return new PageImpl<>(currencyModels, entities.getPageable(), entities.getTotalElements());
     }
 }

@@ -5,6 +5,7 @@ import org.apache.http.client.utils.URIBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import quickbit.core.exception.CurrencyRequestException;
 import quickbit.core.model.NewsModel;
 import quickbit.core.model.data.NewsDataModel;
 import quickbit.core.service.cache.NewsCacheService;
@@ -16,12 +17,14 @@ import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import static quickbit.core.util.ProviderConstraints.LATEST_NEWS_URL;
 
 @Service
 public class NewsServiceImpl implements NewsService {
+    private static final Logger LOGGER = Logger.getLogger(NewsServiceImpl.class.getName());
 
     private final NewsCacheService cacheService;
     private final String apiKey;
@@ -87,7 +90,8 @@ public class NewsServiceImpl implements NewsService {
             return HttpUtil.sendRequest(request, NewsDataModel.class);
 
         } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
+            LOGGER.warning("При запросе новостей произошла ошибка");
+            throw new CurrencyRequestException(e.getMessage());
         }
     }
 }

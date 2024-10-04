@@ -21,6 +21,8 @@ public interface CurrencyService {
 
     List<Currency> findAll();
 
+    Page<Currency> findAll(@NotNull Pageable pageable);
+
     List<Currency> findAllFiat();
 
     List<Currency> findAllFiatWithoutDefault();

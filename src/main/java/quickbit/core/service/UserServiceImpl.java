@@ -85,6 +85,7 @@ public class UserServiceImpl implements UserService {
         return repository.findByUsername(username);
     }
 
+    @NotNull
     @Override
     @Transactional
     public User create(@NotNull CreateUserForm form) {
@@ -117,8 +118,16 @@ public class UserServiceImpl implements UserService {
         return newUser;
     }
 
+    @NotNull
     @Override
     public Page<User> findAll(@NotNull Pageable pageable) {
         return repository.findAll(pageable);
+    }
+
+    @NotNull
+    @Override
+    public User getByUuid(String uuid) {
+        return repository.findByUuid(uuid)
+            .orElseThrow(UserNotFoundException::new);
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
+import quickbit.core.exception.CurrencyRequestException;
 import quickbit.core.model.data.FiatCurrencyDataModel;
 import quickbit.core.model.data.PriceResponseDataModel;
 import quickbit.core.service.cache.CurrencyPriceCacheService;
@@ -29,6 +30,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import static quickbit.core.util.ProviderConstraints.CURRENCY_PROVIDER_BASE_URL;
@@ -38,8 +40,8 @@ import static quickbit.core.util.ProviderConstraints.LATEST_CURRENCY_RATE_URL;
 
 @Service
 public class CurrencyServiceImpl implements CurrencyService {
-
-    private final static String DEFAULT_CURRENCY = "USD";
+    private static final Logger LOGGER = Logger.getLogger(CurrencyServiceImpl.class.getName());
+    private static final String DEFAULT_CURRENCY = "USD";
 
     private final CurrencyRepository currencyRepository;
     private final CurrencyPriceRepository currencyPriceRepository;
@@ -83,6 +85,11 @@ public class CurrencyServiceImpl implements CurrencyService {
     @Override
     public List<Currency> findAll() {
         return currencyRepository.findAll();
+    }
+
+    @Override
+    public Page<Currency> findAll(@NotNull Pageable pageable) {
+        return currencyRepository.findAll(pageable);
     }
 
     @Override
@@ -193,7 +200,8 @@ public class CurrencyServiceImpl implements CurrencyService {
             return HttpUtil.sendRequest(request, PriceResponseDataModel.class);
 
         } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
+            LOGGER.warning("При запросе цен криптовалюты произошла ошибка");
+            throw new CurrencyRequestException(e.getMessage());
         }
     }
 
@@ -228,7 +236,8 @@ public class CurrencyServiceImpl implements CurrencyService {
             return HttpUtil.sendRequest(request, FiatCurrencyDataModel.class);
 
         } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
+            LOGGER.warning("При запросе цен фиатных валют произошла ошибка");
+            throw new CurrencyRequestException(e.getMessage());
         }
     }
 }

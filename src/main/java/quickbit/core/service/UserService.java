@@ -26,10 +26,15 @@ public interface UserService {
     @Nullable
     User getByEmail(@NotNull String email);
 
+    @Nullable
     Optional<User> findByUsername(@NotNull String username);
 
+    @NotNull
     User create(@NotNull CreateUserForm form);
 
+    @NotNull
     Page<User> findAll(@NotNull Pageable pageable);
 
+    @NotNull
+    User getByUuid(@NotNull String uuid);
 }

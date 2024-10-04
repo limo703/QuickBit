@@ -49,6 +49,7 @@ public class UserModelAssembler implements RepresentationModelAssembler<User, Us
             .setLastName(entity.getLastName())
             .setUsername(entity.getUsername())
             .setUuid(entity.getUuid())
+            .setEmail(entity.getEmail())
             .setWallet(
                 walletModelAssembler.toModel(wallet)
             );
@@ -57,7 +58,7 @@ public class UserModelAssembler implements RepresentationModelAssembler<User, Us
         return userModel;
     }
 
-    public Page<UserModel> toPagedModel(Page<? extends User> entities) {
+    public Page<UserModel> toModels(Page<? extends User> entities) {
         List<UserModel> userModels = entities.stream()
             .map(this::toModel)
             .collect(Collectors.toList());
