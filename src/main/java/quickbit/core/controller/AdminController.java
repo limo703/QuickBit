@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import quickbit.core.form.admin.CreateCurrencyForm;
 import quickbit.core.form.EditUserForm;
+import quickbit.core.form.admin.CreateCurrencyForm;
 import quickbit.core.form.admin.EditCurrencyForm;
 import quickbit.core.model.AuthUser;
 import quickbit.core.model.CurrencyModel;
@@ -23,7 +23,6 @@ import quickbit.core.model.UserModel;
 import quickbit.core.service.admin.CurrencyAdminService;
 import quickbit.core.service.admin.UserAdminService;
 import quickbit.core.util.RedirectUtil;
-import quickbit.dbcore.entity.Currency;
 
 @Controller
 @RequestMapping("admin")

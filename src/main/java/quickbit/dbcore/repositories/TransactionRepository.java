@@ -1,6 +1,8 @@
 package quickbit.dbcore.repositories;
 
 import com.sun.istack.NotNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import quickbit.dbcore.entity.Transaction;
@@ -23,4 +25,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
         @NotNull Boolean typeOpp,
         @NotNull Double price
     );
+
+    Page<Transaction> findAllByUserId(@NotNull Long userId, @NotNull Pageable pageable);
 }

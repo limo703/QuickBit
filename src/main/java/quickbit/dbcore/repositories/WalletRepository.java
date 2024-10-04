@@ -15,34 +15,28 @@ public interface WalletRepository extends JpaRepository<Wallet, Long> {
     Optional<Wallet> findByUserIdAndCurrencyId(@NotNull Long userId, @NotNull Long currencyId);
 
     @Query(
-        value = "" +
-        "select w from Wallet w " +
+        value = "select w from Wallet w " +
         "join w.user u " +
         "where u.id = :userId " +
-        "and u.defaultWalletId != w.id" +
-        ""
+        "and u.defaultWalletId != w.id"
     )
     Set<Wallet> findAllByUserIdWithoutDefault(@NotNull Long userId);
 
     @Query(
-        value = "" +
-        "select w from Wallet as w " +
+        value = "select w from Wallet as w " +
         "join Currency as c on w.currencyId = c.id " +
         "where w.userId = :userId " +
         "and c.isFiat = true " +
-        "and w.amount != 0" +
-        ""
+        "and w.amount != 0"
     )
     Set<Wallet> findAllFiatByUserId(@NotNull Long userId);
 
     @Query(
-        value = "" +
-        "select w from Wallet as w " +
+        value = "select w from Wallet as w " +
         "join Currency as c on w.currencyId = c.id " +
         "where w.userId = :userId " +
         "and c.isFiat = false " +
-        "and w.amount != 0" +
-        ""
+        "and w.amount != 0"
     )
     Set<Wallet> findAllNotFiatByUserId(@NotNull Long userId);
 }

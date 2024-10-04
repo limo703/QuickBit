@@ -15,11 +15,14 @@ import quickbit.core.model.AuthUser;
 import quickbit.core.model.CurrencyModel;
 import quickbit.core.model.NewsModel;
 import quickbit.core.model.assembler.CurrencyModelAssembler;
+import quickbit.core.model.assembler.TransactionModelAssembler;
 import quickbit.core.model.assembler.UserModelAssembler;
 import quickbit.core.model.assembler.WalletModelAssembler;
 import quickbit.core.service.CurrencyService;
 import quickbit.core.service.NewsService;
+import quickbit.core.service.TransactionService;
 import quickbit.core.service.WalletService;
+import quickbit.dbcore.entity.Transaction;
 import quickbit.dbcore.entity.Wallet;
 
 import java.util.List;
@@ -31,26 +34,32 @@ public class HomeController {
 
     private final CurrencyService currencyService;
     private final WalletService walletService;
+    private final TransactionService transactionService;
     private final NewsService newsService;
     private final UserModelAssembler userModelAssembler;
     private final WalletModelAssembler walletModelAssembler;
     private final CurrencyModelAssembler currencyModelAssembler;
+    private final TransactionModelAssembler transactionModelAssembler;
 
     @Autowired
     public HomeController(
         CurrencyService currencyService,
         WalletService walletService,
+        TransactionService transactionService,
         NewsService newsService,
         UserModelAssembler userModelAssembler,
         WalletModelAssembler walletModelAssembler,
-        CurrencyModelAssembler currencyModelAssembler
+        CurrencyModelAssembler currencyModelAssembler,
+        TransactionModelAssembler transactionModelAssembler
     ) {
+        this.transactionService = transactionService;
         this.newsService = newsService;
         this.currencyService = currencyService;
         this.walletService = walletService;
         this.userModelAssembler = userModelAssembler;
         this.walletModelAssembler = walletModelAssembler;
         this.currencyModelAssembler = currencyModelAssembler;
+        this.transactionModelAssembler = transactionModelAssembler;
     }
 
     @GetMapping()
@@ -73,5 +82,17 @@ public class HomeController {
             .addObject("fiatWallets", walletModelAssembler.toCollectionModel(fiatWallets))
             .addObject("currencyModels", criptoCurrencies)
             .addObject("newsModels", newsModels);
+    }
+
+    @GetMapping("transactions")
+    @PreAuthorize("@permissionService.check(#authUser)")
+    public ModelAndView transactions(
+        @AuthenticationPrincipal AuthUser authUser,
+        @PageableDefault Pageable pageable
+    ) {
+        Page<Transaction> transactions = transactionService.findAllByUserId(authUser.getUser().getId(), pageable);
+
+        return new ModelAndView("transactions")
+            .addObject("transactions", transactionModelAssembler.toModels(transactions));
     }
 }

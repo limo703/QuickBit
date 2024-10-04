@@ -2,6 +2,8 @@ package quickbit.core.service;
 
 import com.sun.istack.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import quickbit.dbcore.entity.Transaction;
 import quickbit.dbcore.repositories.TransactionRepository;
@@ -22,8 +24,20 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Set<Transaction> findAllByCurrencyIdAndTypeAndPrice(Long currencyId, Boolean typeOpp, Double price) {
+    public Set<Transaction> findAllByCurrencyIdAndTypeAndPrice(
+        @NotNull Long currencyId,
+        @NotNull Boolean typeOpp,
+        @NotNull Double price
+    ) {
         return transactionRepository.findAllByCurrencyIdAndTypeOppAndPrice(currencyId, typeOpp, price);
+    }
+
+    @Override
+    public Page<Transaction> findAllByUserId(
+        @NotNull Long userId,
+        @NotNull Pageable pageable
+    ) {
+        return transactionRepository.findAllByUserId(userId, pageable);
     }
 
     @Override
@@ -42,4 +56,6 @@ public class TransactionServiceImpl implements TransactionService {
     public void removeAll(@NotNull Iterable<Transaction> transactions) {
         transactionRepository.deleteAll(transactions);
     }
+
+
 }

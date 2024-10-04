@@ -6,6 +6,6 @@ package quickbit.core.util;
 public enum TransactionType {
 
     BUY,
-    SELL;
+    SELL
 
 }
