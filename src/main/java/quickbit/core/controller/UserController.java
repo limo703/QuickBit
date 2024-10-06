@@ -81,7 +81,13 @@ public class UserController {
     ) {
         return new ModelAndView("user/edit")
             .addObject("userModel", userModel)
-            .addObject("editUserForm", new EditUserForm());
+            .addObject("editUserForm",
+                new EditUserForm()
+                    .setEmail(userModel.getEmail())
+                    .setUsername(userModel.getUsername())
+                    .setFirstName(userModel.getFirstName())
+                    .setLastName(userModel.getLastName())
+            );
     }
 
     @PostMapping("update-avatar")

@@ -26,8 +26,6 @@ public class Wallet extends UuidTimedEntity {
     @Column(name = "user_id", insertable = false, updatable = false)
     private Long userId;
 
-    private boolean isDefault;
-
     public BigDecimal getAmount() {
         return amount;
     }
@@ -75,15 +73,6 @@ public class Wallet extends UuidTimedEntity {
 
     public Wallet add(BigDecimal amount) {
         this.amount = this.amount.add(amount);
-        return this;
-    }
-
-    public boolean isDefault() {
-        return isDefault;
-    }
-
-    public Wallet setDefault(boolean aDefault) {
-        isDefault = aDefault;
         return this;
     }
 

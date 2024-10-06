@@ -1,6 +1,7 @@
 package quickbit.core.schedule;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import quickbit.core.service.NewsService;
 
@@ -18,8 +19,8 @@ public class NewsScheduler {
         this.newsService = newsService;
     }
 
-    @Scheduled(fixedDelay = 5 * 60 * 60 * 1000)
-    public void scheduledNotFiatCurrency() {
-        newsService.updateNews();
-    }
+//    @Scheduled(fixedDelay = 5 * 60 * 60 * 1000)
+//    public void scheduledNotFiatCurrency() {
+//        newsService.updateNews();
+//    }
 }

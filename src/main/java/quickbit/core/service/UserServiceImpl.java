@@ -1,7 +1,13 @@
 package quickbit.core.service;
 
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import quickbit.core.form.CreateUserForm;
 import quickbit.core.form.EditUserForm;
+import quickbit.core.model.AuthUser;
+import quickbit.core.service.security.SecurityService;
+import quickbit.dbcore.entity.Currency;
 import quickbit.dbcore.entity.Image;
 import quickbit.dbcore.entity.User;
 import quickbit.dbcore.entity.Wallet;
@@ -19,6 +25,8 @@ import quickbit.dbcore.repositories.WalletRepository;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -30,6 +38,7 @@ public class UserServiceImpl implements UserService {
     private final WalletRepository walletRepository;
     private final ImageService imageService;
     private final CurrencyService currencyService;
+    private final SecurityService securityService;
 
     @Autowired
     public UserServiceImpl(
@@ -37,13 +46,15 @@ public class UserServiceImpl implements UserService {
         PasswordEncoder passwordEncoder,
         WalletRepository walletRepository,
         ImageService imageService,
-        CurrencyService currencyService
+        CurrencyService currencyService,
+        SecurityService securityService
     ) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
         this.walletRepository = walletRepository;
         this.imageService = imageService;
         this.currencyService = currencyService;
+        this.securityService = securityService;
     }
 
     @NotNull
@@ -65,6 +76,7 @@ public class UserServiceImpl implements UserService {
             .setLastName(form.getLastName())
         ;
 
+        securityService.changeContextUser(user);
         return repository.save(user);
     }
 
@@ -102,20 +114,35 @@ public class UserServiceImpl implements UserService {
 
         newUser = repository.save(newUser);
 
-        Wallet wallet = new Wallet();
-
-        wallet
-            .setAmount(BigDecimal.TEN)
-            .setCurrency(currencyService.getDefault())
-            .setUser(newUser);
-
-        wallet = walletRepository.save(wallet);
+        Wallet wallet = initializeWallets(newUser);
         newUser.setDefaultWalletId(wallet.getId());
 
         Image image = imageService.generateAndSaveAvatar(newUser);
         newUser.setAvatarId(image.getId());
 
         return newUser;
+    }
+
+    private Wallet initializeWallets(@NotNull User user) {
+        List<Currency> currencies = currencyService.findAll();
+
+        Set<Wallet> newWallets = new HashSet<>();
+        for (Currency currency : currencies) {
+            newWallets.add(
+                new Wallet()
+                    .setUser(user)
+                    .setAmount(BigDecimal.ZERO)
+                    .setCurrency(currency)
+            );
+        }
+        walletRepository.saveAll(newWallets);
+
+        Currency defaultCurrency = currencyService.getDefault();
+        return newWallets
+            .stream()
+            .filter(wallet -> wallet.getCurrency().equals(defaultCurrency))
+            .findFirst()
+            .orElse(null);
     }
 
     @NotNull
