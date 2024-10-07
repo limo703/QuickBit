@@ -54,31 +54,14 @@ public class WalletServiceImpl implements WalletService {
             .orElseThrow(WalletNotFoundException::new);
     }
 
-    @NotNull
-    @Override
-    public Wallet getOrCreate(
-        @NotNull User user,
-        @NotNull Currency currency
-    ) {
-        Optional<Wallet> optionalWallet =
-            walletRepository.findByUserIdAndCurrencyId(user.getId(), currency.getId());
-
-        return optionalWallet.orElseGet(() -> walletRepository.save(
-            new Wallet()
-                .setCurrency(currency)
-                .setUser(user)
-                .setAmount(BigDecimal.ZERO)
-        ));
-    }
-
     @Override
     @Transactional
     public Wallet deposit(
         @NotNull DepositForm form,
-        @NotNull User user
+        @NotNull Long userId
     ) {
         Currency currency = currencyService.getByName(form.getCurrency());
-        Wallet wallet = getOrCreate(user, currency);
+        Wallet wallet = getWalletByUserIdAndCurrencyId(userId, currency.getId());
 
         BigDecimal addAmount = BigDecimal.valueOf(form.getAmount());
         return walletRepository.save(wallet.add(addAmount));
@@ -156,7 +139,7 @@ public class WalletServiceImpl implements WalletService {
         );
 
         updatedWallets.addAll(
-            prepareUserWallets(user, oppCurrency, counterAmount, counterSum, form.getTypeOpp())
+            prepareUserWallets(user.getId(), oppCurrency, counterAmount, counterSum, form.getTypeOpp())
         );
 
         walletRepository.saveAll(updatedWallets);
@@ -174,14 +157,14 @@ public class WalletServiceImpl implements WalletService {
     }
 
     private Set<Wallet> prepareUserWallets(
-        @NotNull User user,
+        @NotNull Long userId,
         @NotNull Currency currency,
         @NotNull Double counterAmount,
         @NotNull Double counterDefaultAmount,
         boolean typeOpp
     ) {
-        Wallet opWallet = getWalletByUserIdAndCurrencyId(user.getId(), currency.getId());
-        Wallet defWallet = getDefault(user);
+        Wallet opWallet = getWalletByUserIdAndCurrencyId(userId, currency.getId());
+        Wallet defWallet = getDefault(userId);
 
         BigDecimal difAmount = BigDecimal.valueOf(counterAmount);
         BigDecimal difDefAmount = BigDecimal.valueOf(counterDefaultAmount);
@@ -190,10 +173,8 @@ public class WalletServiceImpl implements WalletService {
     }
 
     private Set<Wallet> prepareWalletsForCloseTransaction(@NotNull Transaction transaction) {
-        User user = userService.getById(transaction.getUserId());
-
         Wallet opWallet = getWalletByUserIdAndCurrencyId(transaction.getUserId(), transaction.getCurrencyId());
-        Wallet defWallet = getDefault(user);
+        Wallet defWallet = getDefault(transaction.getUserId());
 
         BigDecimal difAmount = BigDecimal.valueOf(transaction.getAmount());
         BigDecimal difDefAmount = BigDecimal.valueOf(transaction.getAmount() * transaction.getOperationPrice());
@@ -284,8 +265,8 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public Wallet getDefault(@NotNull User user) {
+    public Wallet getDefault(@NotNull Long userId) {
         Currency currency = currencyService.getDefault();
-        return getWalletByUserIdAndCurrencyId(user.getId(), currency.getId());
+        return getWalletByUserIdAndCurrencyId(userId, currency.getId());
     }
 }

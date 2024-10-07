@@ -18,15 +18,9 @@ public interface WalletService {
     @NotNull
     Wallet getById(Long walletId);
 
-    @NotNull
-    Wallet getOrCreate(
-        @NotNull User user,
-        @NotNull Currency currency
-    );
-
     Wallet deposit(
         @NotNull DepositForm form,
-        @NotNull User user
+        @NotNull Long userId
     );
 
     void processingTransaction(
@@ -55,5 +49,5 @@ public interface WalletService {
         @NotNull ExchangeCurrenciesForm form
     );
 
-    Wallet getDefault(@NotNull User user);
+    Wallet getDefault(@NotNull Long userId);
 }

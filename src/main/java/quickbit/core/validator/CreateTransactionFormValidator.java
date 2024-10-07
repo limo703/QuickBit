@@ -9,7 +9,6 @@ import quickbit.core.form.CreateTransactionForm;
 import quickbit.core.model.AuthUser;
 import quickbit.core.service.CurrencyService;
 import quickbit.core.service.WalletService;
-import quickbit.dbcore.entity.User;
 import quickbit.dbcore.entity.Wallet;
 
 import java.util.Objects;
@@ -57,10 +56,13 @@ public class CreateTransactionFormValidator implements Validator {
             errors.rejectValue(CURRENCY_NAME_FIELD, ERROR_IS_EMPTY);
         }
 
-        User user = authUser.getUser();
+        Long userId = authUser.getUser().getId();
 
-        Wallet defWallet = walletService.getDefault(user);
-        Wallet coinWallet = walletService.getOrCreate(user, currencyService.getByName(form.getCurrencyName()));
+        Wallet defWallet = walletService.getDefault(userId);
+        Wallet coinWallet = walletService.getWalletByUserIdAndCurrencyId(
+            userId,
+            currencyService.getByName(form.getCurrencyName()).getId()
+        );
 
         if (form.getTypeOpp()) {
             if (defWallet.getAmount().doubleValue() < form.getAmount() * form.getPrice()) {

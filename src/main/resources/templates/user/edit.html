@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Редактирование профиля</title>
+  <title>Edit profile</title>
   <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}">
 </head>
 <body>
@@ -11,7 +11,7 @@
 <div th:insert="fragments/navbar :: navbar"></div>
 
 <div class="container">
-  <h1>Редактирование профиля</h1>
+  <h1>Edit profile</h1>
 
   <div class="avatar" onclick="document.getElementById('avatarInput').click();">
     <img th:src="@{/image/{uuid}(uuid=${userModel.avatar})}" width="100" height="100" alt="Аватар">
@@ -23,16 +23,16 @@
 
   <form th:action="@{/user/{username}/edit(username=${userModel.username})}" method="post">
     <div class="form-group">
-      <label for="firstName">Имя:</label>
+      <label for="firstName">Name:</label>
       <input type="text" id="firstName" name="firstName" th:value="${editUserForm.firstName}" required>
     </div>
 
     <div class="form-group">
-      <label for="lastName">Фамилия:</label>
+      <label for="lastName">Last name:</label>
       <input type="text" id="lastName" name="lastName" th:value="${editUserForm.lastName}" required>
     </div>
 
-    <button type="submit">Сохранить изменения</button>
+    <button type="submit">Save changes</button>
   </form>
 </div>
 

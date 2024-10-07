@@ -29,7 +29,6 @@ import quickbit.core.util.RedirectUtil;
 import quickbit.core.validator.CreateTransactionFormValidator;
 import quickbit.dbcore.entity.Currency;
 import quickbit.dbcore.entity.Transaction;
-import quickbit.dbcore.entity.User;
 import quickbit.dbcore.entity.Wallet;
 
 import java.math.BigDecimal;
@@ -80,12 +79,12 @@ public class TransactionController {
         @RequestParam("typeOpp") boolean type,
         @AuthenticationPrincipal AuthUser authUser
     ) {
-        User user = authUser.getUser();
+        Long userId = authUser.getUser().getId();
         Currency currency = currencyService.getByName(currencyName);
         Currency defaultCurrency = currencyService.getDefault();
 
-        Wallet wallet = walletService.getOrCreate(user, currency);
-        Wallet defaultWallet = walletService.getOrCreate(user, defaultCurrency);
+        Wallet wallet = walletService.getWalletByUserIdAndCurrencyId(userId, currency.getId());
+        Wallet defaultWallet = walletService.getWalletByUserIdAndCurrencyId(userId, defaultCurrency.getId());
 
         wallet = type ? defaultWallet : wallet;
         BigDecimal price = currencyService.getLastPrice(currency.getId());

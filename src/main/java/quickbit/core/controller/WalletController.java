@@ -92,25 +92,8 @@ public class WalletController {
         DepositForm depositForm,
         @AuthenticationPrincipal AuthUser authUser
     ) {
-        walletService.deposit(depositForm, authUser.getUser());
+        walletService.deposit(depositForm, authUser.getUser().getId());
         return RedirectUtil.redirect("/home");
-    }
-
-    @GetMapping("exchange")
-    @PreAuthorize("@permissionService.check(#authUser)")
-    public ModelAndView exchangePage(
-        @AuthenticationPrincipal AuthUser authUser
-    ) {
-        Set<Wallet> fiatWallets = walletService.findAllFiatWallets(authUser.getUser().getId());
-        List<Currency> fiatCurrencies = currencyService.findAllFiat();
-
-        return new ModelAndView("currency/exchange")
-            .addObject("wallets",
-                walletModelAssembler.toCollectionModel(fiatWallets)
-            )
-            .addObject("currencies",
-                currencyModelAssembler.toCollectionModel(fiatCurrencies)
-            );
     }
 
     @PostMapping("exchange")
