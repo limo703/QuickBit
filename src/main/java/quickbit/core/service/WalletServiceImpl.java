@@ -27,19 +27,16 @@ public class WalletServiceImpl implements WalletService {
     private final WalletRepository walletRepository;
     private final CurrencyService currencyService;
     private final TransactionService transactionService;
-    private final UserService userService;
 
     @Autowired
     public WalletServiceImpl(
         WalletRepository walletRepository,
         CurrencyService currencyService,
-        TransactionService transactionService,
-        UserService userService
+        TransactionService transactionService
     ) {
         this.walletRepository = walletRepository;
         this.currencyService = currencyService;
         this.transactionService = transactionService;
-        this.userService = userService;
     }
 
     @Override
@@ -85,7 +82,7 @@ public class WalletServiceImpl implements WalletService {
         double counterSum = 0;
         double counterAmount = 0;
 
-        Set<Transaction> removeTransactions = new HashSet<>();
+        Set<Transaction> closedTransactions = new HashSet<>();
         Set<Wallet> updatedWallets = new HashSet<>();
         for (Transaction revTransaction : reverseFilteredTransactions) {
             double revTransactionSum = revTransaction.getAmount() * revTransaction.getOperationPrice();
@@ -94,7 +91,7 @@ public class WalletServiceImpl implements WalletService {
             if (revTransactionSum < transactionSum) {
                 transactionSum -= revTransactionSum;
                 transactionAmount -= revTransactionAmount;
-                removeTransactions.add(revTransaction);
+                closedTransactions.add(revTransaction);
 
                 counterSum += revTransactionSum;
                 counterAmount += revTransactionAmount;
@@ -107,16 +104,15 @@ public class WalletServiceImpl implements WalletService {
                 transactionSum = 0;
                 transactionAmount = 0;
 
-                removeTransactions.add(revTransaction);
+                closedTransactions.add(revTransaction);
 
                 if (revTransactionAmount != 0) {
-                    transactionService.save(
-                        new Transaction()
-                            .setUser(revTransaction.getUser())
-                            .setOperationPrice(revTransaction.getOperationPrice())
-                            .setAmount(revTransactionAmount)
-                            .setTypeOpp(revTransaction.getTypeOpp())
-                            .setCurrencyId(revTransaction.getCurrencyId())
+                    processingCreateTransaction(
+                        revTransactionAmount,
+                        revTransaction.getOperationPrice(),
+                        revTransaction.getTypeOpp(),
+                        revTransaction.getCurrencyId(),
+                        revTransaction.getUser()
                     );
                 }
                 break;
@@ -124,18 +120,13 @@ public class WalletServiceImpl implements WalletService {
         }
 
         if (transactionSum != 0 && transactionAmount != 0) {
-            transactionService.save(
-                new Transaction()
-                    .setAmount(transactionAmount)
-                    .setOperationPrice(form.getPrice())
-                    .setTypeOpp(form.getTypeOpp())
-                    .setCurrencyId(oppCurrency.getId())
-                    .setUser(user)
+            processingCreateTransaction(
+                transactionAmount, form.getPrice(), form.getTypeOpp(), oppCurrency.getId(), user
             );
         }
 
         updatedWallets.addAll(
-            processingRemoveTransactions(removeTransactions)
+            processingClosedTransactions(closedTransactions)
         );
 
         updatedWallets.addAll(
@@ -145,14 +136,44 @@ public class WalletServiceImpl implements WalletService {
         walletRepository.saveAll(updatedWallets);
     }
 
-    private Set<Wallet> processingRemoveTransactions(@NotNull Set<Transaction> removeTransactions) {
+    private void processingCreateTransaction(
+        @NotNull Double amount,
+        @NotNull Double price,
+        @NotNull Boolean typeOpp,
+        @NotNull Long currencyId,
+        @NotNull User user
+    ) {
+        Wallet wallet;
+        BigDecimal reservedAmount;
+        if (typeOpp) {
+            wallet = getDefault(user.getId());
+            reservedAmount = BigDecimal.valueOf(amount * price);
+        } else {
+            wallet = getWalletByUserIdAndCurrencyId(user.getId(), currencyId);
+            reservedAmount = BigDecimal.valueOf(amount);
+        }
+        wallet.addReserved(reservedAmount);
+        wallet.subtract(reservedAmount);
+        walletRepository.save(wallet);
+
+        transactionService.save(
+            new Transaction()
+                .setAmount(amount)
+                .setOperationPrice(price)
+                .setTypeOpp(typeOpp)
+                .setCurrencyId(currencyId)
+                .setUser(user)
+        );
+    }
+
+    private Set<Wallet> processingClosedTransactions(@NotNull Set<Transaction> closedTransactions) {
         Set<Wallet> updatedWallets = new HashSet<>();
 
-        removeTransactions.forEach(transaction ->
+        closedTransactions.forEach(transaction ->
             updatedWallets.addAll(prepareWalletsForCloseTransaction(transaction))
         );
 
-        transactionService.removeAll(removeTransactions);
+        transactionService.removeAll(closedTransactions);
         return updatedWallets;
     }
 
@@ -189,21 +210,15 @@ public class WalletServiceImpl implements WalletService {
         BigDecimal difDefAmount,
         boolean typeOpp
     ) {
-        BigDecimal newOpWalletAmount = opWallet.getAmount();
-        BigDecimal newDefWalletAmount = defWallet.getAmount();
-
         if (typeOpp) {
-            newOpWalletAmount = newOpWalletAmount.add(difAmount);
-            newDefWalletAmount = newDefWalletAmount.subtract(difDefAmount);
+            opWallet.add(difAmount);
+            defWallet.subtractReserved(difDefAmount);
         } else {
-            newOpWalletAmount = newOpWalletAmount.subtract(difAmount);
-            newDefWalletAmount = newDefWalletAmount.add(difDefAmount);
+            opWallet.add(difDefAmount);
+            defWallet.subtractReserved(difAmount);
         }
 
-        return Set.of(
-            opWallet.setAmount(newOpWalletAmount),
-            defWallet.setAmount(newDefWalletAmount)
-        );
+        return Set.of(opWallet, defWallet);
     }
 
     @Override
@@ -249,18 +264,18 @@ public class WalletServiceImpl implements WalletService {
         Wallet fromWallet = getWalletByUserIdAndCurrencyId(userId, fromCurrency.getId());
         Wallet toWallet = getWalletByUserIdAndCurrencyId(userId, toCurrency.getId());
 
-        BigDecimal newFromAmount = fromWallet.getAmount().subtract(BigDecimal.valueOf(form.getAmount()));
+        fromWallet.subtract(BigDecimal.valueOf(form.getAmount()));
 
         BigDecimal toDifference = QuickBitUtil.convert(
             BigDecimal.valueOf(form.getAmount()),
             currencyService.getLastPrice(fromCurrency.getId()),
             currencyService.getLastPrice(toCurrency.getId())
         );
-        BigDecimal newToAmount = toWallet.getAmount().add(toDifference);
+        toWallet.add(toDifference);
 
         walletRepository.saveAll(Set.of(
-            fromWallet.setAmount(newFromAmount),
-            toWallet.setAmount(newToAmount)
+            fromWallet,
+            toWallet
         ));
     }
 

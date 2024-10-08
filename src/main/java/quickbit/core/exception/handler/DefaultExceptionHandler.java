@@ -13,6 +13,7 @@ import javax.persistence.EntityNotFoundException;
 @ControllerAdvice
 public class DefaultExceptionHandler {
 
+
     @ExceptionHandler({
         EntityNotFoundException.class,
         FileNotFoundException.class,
@@ -24,4 +25,5 @@ public class DefaultExceptionHandler {
         return new ModelAndView("errors/error-404")
             .addObject("message", ex.getMessage());
     }
+
 }

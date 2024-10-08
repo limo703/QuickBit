@@ -76,6 +76,21 @@ public class Wallet extends UuidTimedEntity {
         return this;
     }
 
+    public Wallet subtract(BigDecimal amount) {
+        this.amount = this.amount.subtract(amount);
+        return this;
+    }
+
+    public Wallet addReserved(BigDecimal amount) {
+        this.reservedAmount = this.reservedAmount.add(amount);
+        return this;
+    }
+
+    public Wallet subtractReserved(BigDecimal amount) {
+        this.reservedAmount = this.reservedAmount.subtract(amount);
+        return this;
+    }
+
     public BigDecimal getReservedAmount() {
         return reservedAmount;
     }

@@ -11,7 +11,10 @@ import org.springframework.stereotype.Service;
 import quickbit.core.model.NewsModel;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class NewsCacheService {
@@ -34,7 +37,10 @@ public class NewsCacheService {
     public List<NewsModel> getNews() {
         try {
             String string = redisTemplate.opsForValue().get(NEWS_CACHE_KEY);
-            return objectMapper.readValue(string, new TypeReference<List<NewsModel>>() { });
+            if (Objects.nonNull(string)) {
+                return objectMapper.readValue(string, new TypeReference<>() {});
+            }
+            return Collections.emptyList();
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }

@@ -33,6 +33,7 @@ public class WalletModelAssembler implements RepresentationModelAssembler<Wallet
 
         walletModel
             .setAmount(entity.getAmount().doubleValue())
+            .setReservedAmount(entity.getReservedAmount().doubleValue())
             .setCurrency(
                 simpleCurrencyModelAssembler.toModel(currency)
             );

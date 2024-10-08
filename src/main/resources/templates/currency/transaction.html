@@ -25,11 +25,13 @@
     <div class="form-group">
       <label for="price">Price</label>
       <input type="text" id="price" th:field="*{price}" placeholder="Enter price" required/>
+      <div th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>
     </div>
 
     <div class="form-group">
       <label for="amount">Amount</label>
       <input type="text" id="amount" th:field="*{amount}" placeholder="Enter amount" required/>
+      <div th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}"></div>
     </div>
 
     <button type="submit" class="btn btn-primary">Submit Transaction</button>
