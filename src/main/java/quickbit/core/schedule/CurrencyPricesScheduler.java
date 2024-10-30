@@ -4,9 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import quickbit.core.service.CurrencyService;
-import quickbit.core.service.NewsService;
-
-import javax.transaction.Transactional;
 
 /**
  * Обновляет цену криптовалюты относительно USD раз в 2 минуты
@@ -24,13 +21,13 @@ public class CurrencyPricesScheduler {
         this.currencyService = currencyService;
     }
 
-//    @Scheduled(fixedDelay = 2 * 60 * 1000)
-//    public void scheduledNotFiatCurrency() {
-//        currencyService.updateNotFiatCurrency();
-//    }
-//
-//    @Scheduled(fixedDelay = 10 * 60 * 1000)
-//    public void scheduledFiatCurrency() {
-//        currencyService.updateFiatCurrency();
-//    }
+    @Scheduled(fixedDelay = 2 * 60 * 1000)
+    public void scheduledNotFiatCurrency() {
+        currencyService.updateNotFiatCurrency();
+    }
+
+    @Scheduled(fixedDelay = 10 * 60 * 1000)
+    public void scheduledFiatCurrency() {
+        currencyService.updateFiatCurrency();
+    }
 }

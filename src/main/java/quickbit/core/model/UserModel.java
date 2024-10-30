@@ -1,6 +1,7 @@
 package quickbit.core.model;
 
 import org.springframework.hateoas.RepresentationModel;
+import quickbit.dbcore.entity.User;
 
 public class UserModel extends RepresentationModel<UserModel> {
 
@@ -82,5 +83,14 @@ public class UserModel extends RepresentationModel<UserModel> {
     public UserModel setEmail(String email) {
         this.email = email;
         return this;
+    }
+
+    public static UserModel of(User user) {
+        return new UserModel()
+            .setUsername(user.getUsername())
+            .setFirstName(user.getFirstName())
+            .setLastName(user.getLastName())
+            .setEmail(user.getEmail())
+            .setUuid(user.getUuid());
     }
 }

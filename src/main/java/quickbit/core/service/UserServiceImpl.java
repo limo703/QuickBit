@@ -6,6 +6,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import quickbit.core.form.CreateUserForm;
 import quickbit.core.form.EditUserForm;
 import quickbit.core.model.AuthUser;
+import quickbit.core.model.UserModel;
 import quickbit.core.service.security.SecurityService;
 import quickbit.dbcore.entity.Currency;
 import quickbit.dbcore.entity.Image;
@@ -22,6 +23,8 @@ import org.springframework.lang.Nullable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import quickbit.dbcore.repositories.WalletRepository;
+import quickbit.notification.service.EventSenderService;
+import quickbit.notification.util.EventType;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
@@ -39,6 +42,7 @@ public class UserServiceImpl implements UserService {
     private final ImageService imageService;
     private final CurrencyService currencyService;
     private final SecurityService securityService;
+    private final EventSenderService eventSenderService;
 
     @Autowired
     public UserServiceImpl(
@@ -47,7 +51,8 @@ public class UserServiceImpl implements UserService {
         WalletRepository walletRepository,
         ImageService imageService,
         CurrencyService currencyService,
-        SecurityService securityService
+        SecurityService securityService,
+        EventSenderService eventSenderService
     ) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
@@ -55,6 +60,7 @@ public class UserServiceImpl implements UserService {
         this.imageService = imageService;
         this.currencyService = currencyService;
         this.securityService = securityService;
+        this.eventSenderService = eventSenderService;
     }
 
     @NotNull
@@ -120,6 +126,7 @@ public class UserServiceImpl implements UserService {
         Image image = imageService.generateAndSaveAvatar(newUser);
         newUser.setAvatarId(image.getId());
 
+        eventSenderService.sendNotification(EventType.REGISTRATION, UserModel.of(newUser));
         return newUser;
     }
 
