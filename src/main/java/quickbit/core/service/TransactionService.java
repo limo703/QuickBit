@@ -5,15 +5,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import quickbit.dbcore.entity.Transaction;
 
-import java.util.Set;
+import java.util.List;
 
 public interface TransactionService {
 
-    Set<Transaction> findAllByCurrencyIdAndTypeAndPrice(
+    List<Transaction> findMatchingOrders(
         @NotNull Long currencyId,
-        @NotNull Boolean typeOpp,
+        @NotNull Boolean takerTypeOpp,
         @NotNull Double price
     );
+
+    int lockTransactionByKey(@NotNull String lockKey);
 
     Page<Transaction> findAllByUserId(@NotNull Long userId, @NotNull Pageable pageable);
 

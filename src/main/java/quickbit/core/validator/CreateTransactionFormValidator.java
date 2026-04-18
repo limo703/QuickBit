@@ -9,9 +9,13 @@ import quickbit.core.form.CreateTransactionForm;
 import quickbit.core.model.AuthUser;
 import quickbit.core.service.CurrencyService;
 import quickbit.core.service.WalletService;
+import quickbit.core.util.MoneyValidationUtil;
+import quickbit.dbcore.entity.Currency;
 import quickbit.dbcore.entity.Wallet;
 
+import java.math.BigDecimal;
 import java.util.Objects;
+import java.util.Optional;
 
 @Component
 public class CreateTransactionFormValidator implements Validator {
@@ -19,6 +23,7 @@ public class CreateTransactionFormValidator implements Validator {
     private final static String PRICE_FIELD = "price";
     private final static String AMOUNT_FIELD = "amount";
     private final static String CURRENCY_NAME_FIELD = "currencyName";
+    private final static String TYPE_OPP_FIELD = "typeOpp";
     private final static String ERROR_IS_EMPTY = "error.is.empty";
     private final static String ERROR_INCORRECT_FORMAT = "error.incorrect.format";
     private final static String ERROR_INSUFFICIENT_FUNDS = "error.insufficient.funds";
@@ -46,14 +51,38 @@ public class CreateTransactionFormValidator implements Validator {
 
         CreateTransactionForm form = (CreateTransactionForm) target;
 
+        if (Objects.isNull(form.getTypeOpp())) {
+            errors.rejectValue(TYPE_OPP_FIELD, ERROR_IS_EMPTY);
+        }
         if (Objects.isNull(form.getPrice())) {
             errors.rejectValue(PRICE_FIELD, ERROR_IS_EMPTY);
         }
         if (Objects.isNull(form.getAmount())) {
             errors.rejectValue(AMOUNT_FIELD, ERROR_IS_EMPTY);
         }
-        if (Objects.isNull(form.getCurrencyName())) {
+        if (Objects.isNull(form.getCurrencyName()) || form.getCurrencyName().isBlank()) {
             errors.rejectValue(CURRENCY_NAME_FIELD, ERROR_IS_EMPTY);
+        }
+
+        if (errors.hasErrors()) {
+            return;
+        }
+
+        if (!MoneyValidationUtil.isPositiveFinite(form.getPrice())) {
+            errors.rejectValue(PRICE_FIELD, ERROR_INCORRECT_FORMAT);
+        }
+        if (!MoneyValidationUtil.isPositiveFinite(form.getAmount())) {
+            errors.rejectValue(AMOUNT_FIELD, ERROR_INCORRECT_FORMAT);
+        }
+
+        if (errors.hasErrors()) {
+            return;
+        }
+
+        Optional<Currency> currencyOpt = currencyService.findByName(form.getCurrencyName());
+        if (currencyOpt.isEmpty()) {
+            errors.rejectValue(CURRENCY_NAME_FIELD, ERROR_INCORRECT_FORMAT);
+            return;
         }
 
         Long userId = authUser.getUser().getId();
@@ -61,18 +90,21 @@ public class CreateTransactionFormValidator implements Validator {
         Wallet defWallet = walletService.getDefault(userId);
         Wallet coinWallet = walletService.getWalletByUserIdAndCurrencyId(
             userId,
-            currencyService.getByName(form.getCurrencyName()).getId()
+            currencyOpt.get().getId()
         );
 
+        BigDecimal amount = BigDecimal.valueOf(form.getAmount());
+        BigDecimal price = BigDecimal.valueOf(form.getPrice());
+
         if (form.getTypeOpp()) {
-            if (defWallet.getAmount().doubleValue() < form.getAmount() * form.getPrice()) {
+            BigDecimal requiredQuote = amount.multiply(price);
+            if (MoneyValidationUtil.nonNull(defWallet.getAmount()).compareTo(requiredQuote) < 0) {
                 errors.rejectValue(AMOUNT_FIELD, ERROR_INSUFFICIENT_FUNDS);
             }
         } else {
-            if (coinWallet.getAmount().doubleValue() < form.getAmount()) {
+            if (MoneyValidationUtil.nonNull(coinWallet.getAmount()).compareTo(amount) < 0) {
                 errors.rejectValue(AMOUNT_FIELD, ERROR_INSUFFICIENT_FUNDS);
             }
         }
-
     }
 }

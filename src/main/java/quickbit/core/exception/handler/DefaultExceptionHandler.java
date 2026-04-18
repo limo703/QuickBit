@@ -13,6 +13,16 @@ import javax.persistence.EntityNotFoundException;
 @ControllerAdvice
 public class DefaultExceptionHandler {
 
+    @ExceptionHandler({
+        IllegalArgumentException.class,
+        IllegalStateException.class
+    })
+    public ModelAndView handleOrderProcessingFailure(Exception ex, Model model) {
+        model.addAttribute("message", ex.getMessage());
+        return new ModelAndView("errors/error-404")
+            .addObject("message", ex.getMessage());
+    }
+
 
     @ExceptionHandler({
         EntityNotFoundException.class,

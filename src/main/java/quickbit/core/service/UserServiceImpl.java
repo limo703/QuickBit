@@ -1,20 +1,5 @@
 package quickbit.core.service;
 
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import quickbit.core.form.CreateUserForm;
-import quickbit.core.form.EditUserForm;
-import quickbit.core.model.AuthUser;
-import quickbit.core.model.UserModel;
-import quickbit.core.service.security.SecurityService;
-import quickbit.dbcore.entity.Currency;
-import quickbit.dbcore.entity.Image;
-import quickbit.dbcore.entity.User;
-import quickbit.dbcore.entity.Wallet;
-import quickbit.dbcore.repositories.UserRepository;
-import quickbit.core.exception.UserNotFoundException;
-import quickbit.core.util.UserRole;
 import com.sun.istack.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,6 +7,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.lang.Nullable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import quickbit.core.exception.UserNotFoundException;
+import quickbit.core.form.CreateUserForm;
+import quickbit.core.form.EditUserForm;
+import quickbit.core.model.UserModel;
+import quickbit.core.service.security.SecurityService;
+import quickbit.core.util.UserRole;
+import quickbit.dbcore.entity.Currency;
+import quickbit.dbcore.entity.Image;
+import quickbit.dbcore.entity.User;
+import quickbit.dbcore.entity.Wallet;
+import quickbit.dbcore.repositories.UserRepository;
 import quickbit.dbcore.repositories.WalletRepository;
 import quickbit.notification.service.EventSenderService;
 import quickbit.notification.util.EventType;
@@ -46,13 +42,13 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     public UserServiceImpl(
-        UserRepository repository,
-        PasswordEncoder passwordEncoder,
-        WalletRepository walletRepository,
-        ImageService imageService,
-        CurrencyService currencyService,
-        SecurityService securityService,
-        EventSenderService eventSenderService
+            UserRepository repository,
+            PasswordEncoder passwordEncoder,
+            WalletRepository walletRepository,
+            ImageService imageService,
+            CurrencyService currencyService,
+            SecurityService securityService,
+            EventSenderService eventSenderService
     ) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
@@ -67,19 +63,19 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getById(@NotNull Long id) {
         return repository.findById(id)
-            .orElseThrow(UserNotFoundException::new);
+                .orElseThrow(UserNotFoundException::new);
     }
 
     @NotNull
     @Override
     public User editUser(
-        @NotNull EditUserForm form,
-        @NotNull Long userId
+            @NotNull EditUserForm form,
+            @NotNull Long userId
     ) {
         User user = getById(userId);
         user
-            .setFirstName(form.getFirstName())
-            .setLastName(form.getLastName())
+                .setFirstName(form.getFirstName())
+                .setLastName(form.getLastName())
         ;
 
         securityService.changeContextUser(user);
@@ -109,14 +105,14 @@ public class UserServiceImpl implements UserService {
     public User create(@NotNull CreateUserForm form) {
         User newUser = new User();
         newUser
-            .setEmail(form.getEmail())
-            .setUsername(form.getUsername())
-            .setRole(UserRole.USER)
-            .setFirstName("")
-            .setLastName("")
-            .setPassword(
-                passwordEncoder.encode(form.getPassword())
-            );
+                .setEmail(form.getEmail())
+                .setUsername(form.getUsername())
+                .setRole(UserRole.USER)
+                .setFirstName("")
+                .setLastName("")
+                .setPassword(
+                        passwordEncoder.encode(form.getPassword())
+                );
 
         newUser = repository.save(newUser);
 
@@ -136,20 +132,21 @@ public class UserServiceImpl implements UserService {
         Set<Wallet> newWallets = new HashSet<>();
         for (Currency currency : currencies) {
             newWallets.add(
-                new Wallet()
-                    .setUser(user)
-                    .setAmount(BigDecimal.ZERO)
-                    .setCurrency(currency)
+                    new Wallet()
+                            .setUser(user)
+                            .setAmount(BigDecimal.ZERO)
+                            .setCurrency(currency)
+                            .setReservedAmount(BigDecimal.ZERO)
             );
         }
         walletRepository.saveAll(newWallets);
 
         Currency defaultCurrency = currencyService.getDefault();
         return newWallets
-            .stream()
-            .filter(wallet -> wallet.getCurrency().equals(defaultCurrency))
-            .findFirst()
-            .orElse(null);
+                .stream()
+                .filter(wallet -> wallet.getCurrency().equals(defaultCurrency))
+                .findFirst()
+                .orElse(null);
     }
 
     @NotNull
@@ -162,6 +159,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getByUuid(String uuid) {
         return repository.findByUuid(uuid)
-            .orElseThrow(UserNotFoundException::new);
+                .orElseThrow(UserNotFoundException::new);
     }
 }

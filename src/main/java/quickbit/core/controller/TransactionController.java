@@ -7,6 +7,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -81,6 +82,38 @@ public class TransactionController {
     ) {
         Long userId = authUser.getUser().getId();
         Currency currency = currencyService.getByName(currencyName);
+        return createTransactionModelView(userId, type, currency, new CreateTransactionForm());
+    }
+
+    @PostMapping("create")
+    @PreAuthorize("@permissionService.check(#authUser)")
+    public ModelAndView createTransaction(
+        @Validated @ModelAttribute("createTransactionForm")
+        CreateTransactionForm createTransactionForm,
+        BindingResult bindingResult,
+        @AuthenticationPrincipal AuthUser authUser
+    ) {
+        if (bindingResult.hasErrors()) {
+            Long userId = authUser.getUser().getId();
+            Boolean typeOpp = createTransactionForm.getTypeOpp();
+            String name = createTransactionForm.getCurrencyName();
+            if (typeOpp == null || name == null || name.isBlank()) {
+                return RedirectUtil.redirect("/home");
+            }
+            return currencyService.findByName(name)
+                .map(currency -> createTransactionModelView(userId, typeOpp, currency, createTransactionForm))
+                .orElseGet(() -> RedirectUtil.redirect("/home"));
+        }
+        walletService.processingTransaction(createTransactionForm, authUser.getUser());
+        return RedirectUtil.redirect("/home");
+    }
+
+    private ModelAndView createTransactionModelView(
+        Long userId,
+        boolean type,
+        Currency currency,
+        CreateTransactionForm transactionForm
+    ) {
         Currency defaultCurrency = currencyService.getDefault();
 
         Wallet wallet = walletService.getWalletByUserIdAndCurrencyId(userId, currency.getId());
@@ -94,18 +127,7 @@ public class TransactionController {
             .addObject("typeOpp", type)
             .addObject("lastPrice", price.round( new MathContext(7, RoundingMode.HALF_UP)))
             .addObject("wallet", walletModelAssembler.toModel(wallet))
-            .addObject("transactionForm", new CreateTransactionForm());
-    }
-
-    @PostMapping("create")
-    @PreAuthorize("@permissionService.check(#authUser)")
-    public ModelAndView createTransaction(
-        @Validated @ModelAttribute("createTransactionForm")
-        CreateTransactionForm createTransactionForm,
-        @AuthenticationPrincipal AuthUser authUser
-    ) {
-        walletService.processingTransaction(createTransactionForm, authUser.getUser());
-        return RedirectUtil.redirect("/home");
+            .addObject("transactionForm", transactionForm);
     }
 
     @GetMapping("all")

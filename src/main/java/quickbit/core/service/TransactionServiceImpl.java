@@ -8,8 +8,7 @@ import org.springframework.stereotype.Service;
 import quickbit.dbcore.entity.Transaction;
 import quickbit.dbcore.repositories.TransactionRepository;
 
-import javax.persistence.EntityNotFoundException;
-import java.util.Set;
+import java.util.List;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
@@ -24,12 +23,20 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Set<Transaction> findAllByCurrencyIdAndTypeAndPrice(
+    public List<Transaction> findMatchingOrders(
         @NotNull Long currencyId,
-        @NotNull Boolean typeOpp,
+        @NotNull Boolean takerTypeOpp,
         @NotNull Double price
     ) {
-        return transactionRepository.findAllByCurrencyIdAndTypeOppAndPrice(currencyId, typeOpp, price);
+        if (takerTypeOpp) {
+            return transactionRepository.findSellOrdersForBuy(currencyId, price);
+        }
+        return transactionRepository.findBuyOrdersForSell(currencyId, price);
+    }
+
+    @Override
+    public int lockTransactionByKey(@NotNull String lockKey) {
+        return transactionRepository.lockTransactionByKey(lockKey);
     }
 
     @Override

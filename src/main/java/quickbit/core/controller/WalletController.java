@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -71,6 +72,40 @@ public class WalletController {
     public ModelAndView depositPage(
         @AuthenticationPrincipal AuthUser authUser
     ) {
+        return buildWalletPage(authUser);
+    }
+
+    @PostMapping("deposit")
+    @PreAuthorize("@permissionService.check(#authUser)")
+    public ModelAndView deposit(
+        @Validated @ModelAttribute("depositUserForm")
+        DepositForm depositForm,
+        BindingResult bindingResult,
+        @AuthenticationPrincipal AuthUser authUser
+    ) {
+        if (bindingResult.hasErrors()) {
+            return buildWalletPage(authUser);
+        }
+        walletService.deposit(depositForm, authUser.getUser().getId());
+        return RedirectUtil.redirect("/home");
+    }
+
+    @PostMapping("exchange")
+    @PreAuthorize("@permissionService.check(#authUser)")
+    public ModelAndView processExchange(
+        @Validated @ModelAttribute("exchangeUserForm")
+        ExchangeCurrenciesForm exchangeCurrenciesForm,
+        BindingResult bindingResult,
+        @AuthenticationPrincipal AuthUser authUser
+    ) {
+        if (bindingResult.hasErrors()) {
+            return buildWalletPage(authUser);
+        }
+        walletService.exchange(authUser.getUser().getId(), exchangeCurrenciesForm);
+        return RedirectUtil.redirect("/home");
+    }
+
+    private ModelAndView buildWalletPage(AuthUser authUser) {
         Wallet wallet = walletService.getById(authUser.getUser().getDefaultWalletId());
         Set<Wallet> fiatWallets = walletService.findAllFiatWallets(authUser.getUser().getId());
         List<Currency> fiatCurrencies = currencyService.findAllFiat();
@@ -83,27 +118,5 @@ public class WalletController {
             .addObject("currencies",
                 currencyModelAssembler.toCollectionModel(fiatCurrencies)
             );
-    }
-
-    @PostMapping("deposit")
-    @PreAuthorize("@permissionService.check(#authUser)")
-    public ModelAndView deposit(
-        @Validated @ModelAttribute("depositUserForm")
-        DepositForm depositForm,
-        @AuthenticationPrincipal AuthUser authUser
-    ) {
-        walletService.deposit(depositForm, authUser.getUser().getId());
-        return RedirectUtil.redirect("/home");
-    }
-
-    @PostMapping("exchange")
-    @PreAuthorize("@permissionService.check(#authUser)")
-    public ModelAndView processExchange(
-        @Validated @ModelAttribute("exchangeUserForm")
-        ExchangeCurrenciesForm exchangeCurrenciesForm,
-        @AuthenticationPrincipal AuthUser authUser
-    ) {
-        walletService.exchange(authUser.getUser().getId(), exchangeCurrenciesForm);
-        return RedirectUtil.redirect("/home");
     }
 }

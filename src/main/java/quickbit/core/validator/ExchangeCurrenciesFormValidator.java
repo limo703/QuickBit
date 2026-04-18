@@ -48,13 +48,15 @@ public class ExchangeCurrenciesFormValidator implements Validator {
 
         Optional<Currency> fromCurrency = currencyService.findByName(form.getFromCurrency());
         Optional<Currency> toCurrency = currencyService.findByName(form.getToCurrency());
-        
+
         if (fromCurrency.isEmpty() || toCurrency.isEmpty()) {
             errors.rejectValue(FROM_CURRENCY_FIELD, ERROR_INCORRECT_FORMAT);
+            return;
         }
 
         if (fromCurrency.get().equals(toCurrency.get())) {
             errors.rejectValue(TO_CURRENCY_FIELD, ERROR_CURRENCY_DO_NOT_MATCH);
+            return;
         }
 
         Optional<Wallet> wallet = walletService.findWalletByUserIdAndCurrencyId(
@@ -64,8 +66,10 @@ public class ExchangeCurrenciesFormValidator implements Validator {
 
         if (
             wallet.isEmpty()
-            || form.getAmount() == 0
-            || wallet.get().getAmount().doubleValue() < form.getAmount()
+                || form.getAmount() == null
+                || form.getAmount() <= 0
+                || wallet.get().getAmount() == null
+                || wallet.get().getAmount().doubleValue() < form.getAmount()
         ) {
             errors.rejectValue(AMOUNT_FIELD, ERROR_INSUFFICIENT_FUNDS);
         }
