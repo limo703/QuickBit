@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>Users List</title>
+  <title>Пользователи</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -65,22 +65,22 @@
 </head>
 <body>
 <div class="container">
-  <h1>Users List</h1>
+  <h1>Пользователи</h1>
 
   <div>
     <table>
       <thead>
       <tr>
-        <th>Username</th>
-        <th>First Name</th>
-        <th>Last Name</th>
+        <th>Логин</th>
+        <th>Имя</th>
+        <th>Фамилия</th>
       </tr>
       </thead>
       <tbody>
       <tr th:each="user : ${users.content}">
-        <td><a th:href="@{/user/{username}(username=${user.username})}" th:text="${user.username}">Username</a></td>
-        <td th:text="${user.firstName}">First Name</td>
-        <td th:text="${user.lastName}">Last Name</td>
+        <td><a th:href="@{/user/{username}(username=${user.username})}" th:text="${user.username}">—</a></td>
+        <td th:text="${user.firstName}">—</td>
+        <td th:text="${user.lastName}">—</td>
       </tr>
       </tbody>
     </table>

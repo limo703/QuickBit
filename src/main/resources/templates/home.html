@@ -38,7 +38,7 @@
             data: {
                 labels: labels,
                 datasets: [{
-                    label: `Rate ${currency.name}`,
+                    label: `Курс ${currency.name}`,
                     data: data,
                     borderColor: getRandomColor(),
                     borderWidth: 2,
@@ -76,7 +76,7 @@
 </script>
 
 <div class="wallet-info-container">
-    <h3>Currency</h3>
+    <h3>Фиат</h3>
     <ul>
         <li th:each="wallet : ${fiatWallets}">
             <a th:href="@{/wallet}" class="plain-link">
@@ -89,7 +89,7 @@
 </div>
 
 <div class="crypto-wallet-info-container">
-    <h3>Crypto wallets</h3>
+    <h3>Криптокошельки</h3>
     <ul>
         <li th:each="wallet : ${wallets}">
             <a th:href="@{/currency/{name}(name = ${wallet.getCurrency()})}" class="plain-link">
@@ -102,7 +102,7 @@
 </div>
 
 <div class="news-container">
-    <h2>News</h2>
+    <h2>Новости</h2>
     <ul class="news-list">
         <li th:each="newsModel : ${newsModels}" class="news-item">
             <a th:href="${newsModel.link}" target="_blank" class="plain-link">

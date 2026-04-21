@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Вход</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -78,27 +78,27 @@
 <body>
 <div class="login-container">
     <div th:if="${param.error}" class="error-message">
-        Invalid username or password. Please try again.
+        Неверный логин или пароль. Попробуйте снова.
     </div>
-    <h2>Login</h2>
+    <h2>Вход</h2>
 
     <form th:action="@{/auth/login}" th:method="post">
 
-        <input type="hidden" name="_csrf" value="${_csrf.token}">
+        <input type="hidden" name="_csrf" th:value="${_csrf.token}">
 
         <div class="form-group">
-            <label for="username">Username</label>
-            <input type="text" id="username" name="username" placeholder="Enter Username" required>
+            <label for="username">Имя пользователя</label>
+            <input type="text" id="username" name="username" placeholder="Введите логин" required>
         </div>
         <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" placeholder="Enter Password" required>
+            <label for="password">Пароль</label>
+            <input type="password" id="password" name="password" placeholder="Введите пароль" required>
         </div>
         <div class="form-group">
-            <button type="submit">Login</button>
+            <button type="submit">Войти</button>
         </div>
         <div class="form-group">
-            <a href="/auth/registration">Don't have an account? Register here</a>
+            <a href="/auth/registration">Нет аккаунта? Зарегистрироваться</a>
         </div>
     </form>
 </div>

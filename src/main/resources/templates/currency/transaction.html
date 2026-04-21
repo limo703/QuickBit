@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>Create Transaction</title>
+  <title>Создание сделки</title>
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
@@ -9,13 +9,13 @@
 <div th:insert="fragments/navbar :: navbar"></div>
 
 <div class="container">
-  <h1>Create Transaction</h1>
+  <h1>Создание сделки</h1>
 
   <div class="currency-info">
-    <h3>Currency: <span th:text="${currency.name}">Currency Name</span></h3>
-    <p>Last Price: <span th:text="${lastPrice}">0.0000000</span></p>
-    <p>Operation Type: <span th:text="${typeOpp ? 'Buy' : 'Sell'}">Buy/Sell</span></p>
-    <p>Wallet Balance: <span th:text="${wallet.amount}">0.0000</span> <span th:text="${typeOpp ? 'USD' : currency.name}" /></p>
+    <h3>Валюта: <span th:text="${currency.name}">BTC</span></h3>
+    <p>Последняя цена: <span th:text="${lastPrice}">0.0000000</span></p>
+    <p>Тип: <span th:text="${typeOpp ? 'Покупка' : 'Продажа'}">—</span></p>
+    <p>Баланс кошелька: <span th:text="${wallet.amount}">0.0000</span> <span th:text="${typeOpp ? 'USD' : currency.name}" /></p>
   </div>
 
   <form th:action="@{/transaction/create}" th:object="${transactionForm}" method="post" class="transaction-form">
@@ -23,18 +23,18 @@
     <input type="hidden" name="typeOpp" th:value="${typeOpp}"/>
 
     <div class="form-group">
-      <label for="price">Price</label>
-      <input type="text" id="price" th:field="*{price}" placeholder="Enter price" required/>
+      <label for="price">Цена</label>
+      <input type="text" id="price" th:field="*{price}" placeholder="Введите цену" required/>
       <div th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>
     </div>
 
     <div class="form-group">
-      <label for="amount">Amount</label>
-      <input type="text" id="amount" th:field="*{amount}" placeholder="Enter amount" required/>
+      <label for="amount">Количество</label>
+      <input type="text" id="amount" th:field="*{amount}" placeholder="Введите количество" required/>
       <div th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}"></div>
     </div>
 
-    <button type="submit" class="btn btn-primary">Submit Transaction</button>
+    <button type="submit" class="btn btn-primary">Отправить</button>
   </form>
 </div>
 </body>

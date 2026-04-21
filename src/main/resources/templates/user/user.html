@@ -11,7 +11,7 @@
 <div th:insert="fragments/navbar :: navbar"></div>
 
 <div class="container">
-    <h1>User profile</h1>
+    <h1>Профиль</h1>
 
     <div class="user-info">
         <div class="avatar-container">
@@ -24,7 +24,7 @@
     <div class="button-container">
         <a th:href="@{/user/{username}/edit(username=${userModel.username})}"
            th:if="${isCurrentUser}"
-           class="edit-button">Edit profile</a>
+           class="edit-button">Редактировать профиль</a>
     </div>
 </div>
 </body>
