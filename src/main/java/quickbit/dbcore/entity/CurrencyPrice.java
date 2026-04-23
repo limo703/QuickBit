@@ -27,6 +27,8 @@ public class CurrencyPrice extends BaseEntity {
     private Long currencyId;
 
     private BigDecimal price;
+    @Column(name = "volume_24h")
+    private BigDecimal volume24h;
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -41,6 +43,15 @@ public class CurrencyPrice extends BaseEntity {
 
     public CurrencyPrice setPrice(BigDecimal price) {
         this.price = price;
+        return this;
+    }
+
+    public BigDecimal getVolume24h() {
+        return volume24h;
+    }
+
+    public CurrencyPrice setVolume24h(BigDecimal volume24h) {
+        this.volume24h = volume24h;
         return this;
     }
 

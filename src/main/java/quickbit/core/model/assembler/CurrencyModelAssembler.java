@@ -4,18 +4,14 @@ import com.sun.istack.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 import quickbit.core.model.CurrencyModel;
-import quickbit.core.model.UserModel;
 import quickbit.core.service.CurrencyService;
 import quickbit.core.service.ImageService;
 import quickbit.dbcore.entity.Currency;
 import quickbit.dbcore.entity.CurrencyPrice;
-import quickbit.dbcore.entity.User;
 
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
@@ -44,13 +40,18 @@ public class CurrencyModelAssembler implements RepresentationModelAssembler<Curr
     public CurrencyModel toModel(@NotNull Currency entity) {
         Set<CurrencyPrice> currencyPriceSet = currencyService.getAllPrices(entity.getId());
         Map<String, Double> pricesMap = new TreeMap<>();
+        Map<String, Double> volumesMap = new TreeMap<>();
 
         currencyPriceSet
             .forEach(
-                price -> pricesMap.put(
-                    price.getCreatedAt().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
-                    price.getPrice().doubleValue()
-                )
+                price -> {
+                    String key = price.getCreatedAt().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+                    pricesMap.put(key, price.getPrice().doubleValue());
+                    volumesMap.put(
+                        key,
+                        Objects.nonNull(price.getVolume24h()) ? price.getVolume24h().doubleValue() : 0D
+                    );
+                }
             );
 
         CurrencyModel model = new CurrencyModel();
@@ -58,7 +59,8 @@ public class CurrencyModelAssembler implements RepresentationModelAssembler<Curr
         model
             .setFiat(entity.isFiat())
             .setName(entity.getName())
-            .setPricesMap(pricesMap);
+            .setPricesMap(pricesMap)
+            .setVolumesMap(volumesMap);
 
         if (Objects.nonNull(entity.getAvatar())) {
             model.setAvatar(

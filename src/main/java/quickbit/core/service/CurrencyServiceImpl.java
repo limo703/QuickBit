@@ -169,6 +169,12 @@ public class CurrencyServiceImpl implements CurrencyService {
                             .get("2781")
                             .getPrice()
                     )
+                    .setVolume24h(
+                        currencyInfo
+                            .getQuote()
+                            .get("2781")
+                            .getVolume_24h()
+                    )
                     .setCurrency(currency)
                     .setCurrencyId(currency.getId())
             );
@@ -216,6 +222,7 @@ public class CurrencyServiceImpl implements CurrencyService {
             newPrices.add(
                 new CurrencyPrice()
                     .setPrice(BigDecimal.valueOf(1 / price))
+                    .setVolume24h(BigDecimal.ZERO)
                     .setCurrency(currency)
                     .setCurrencyId(currency.getId())
             );

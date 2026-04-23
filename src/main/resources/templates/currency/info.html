@@ -16,11 +16,22 @@
     <a th:href="@{/currency/{name}(name=${currencyModel.name})}" th:text="${currencyModel.name}"></a>
   </h3>
   <div class="currency-chart">
-    <canvas th:attr="id='chart-' + ${currencyModel.name}" width="800" height="400"></canvas>
+    <canvas th:attr="id='chart-' + ${currencyModel.name}" height="280"></canvas>
     <div class="currency-price">
       <p>Цена: <span th:text="${price}"></span> $</p>
     </div>
   </div>
+  <div class="currency-indicators-grid">
+    <div class="indicator-chart-block">
+      <h4>MACD</h4>
+      <canvas th:attr="id='macd-chart-' + ${currencyModel.name}" height="140"></canvas>
+    </div>
+    <div class="indicator-chart-block">
+      <h4>Осцилляторы (RSI / WR / StochRSI / KDJ)</h4>
+      <canvas th:attr="id='osc-chart-' + ${currencyModel.name}" height="140"></canvas>
+    </div>
+  </div>
+  <div class="indicator-cards" th:attr="id='metric-cards-' + ${currencyModel.name}"></div>
   <div class="currency-buttons">
     <form th:action="@{/transaction/create}" method="get">
       <input type="hidden" name="typeOpp" value="1">
@@ -38,31 +49,83 @@
 <script th:inline="javascript">
   var currency = /*[[${currencyModel}]]*/ {};
 
-  const ctx = document.getElementById('chart-' + currency.name).getContext('2d');
+  const labels = Object.keys(currency.pricesMap || {});
+  const closePrices = Object.values(currency.pricesMap || {});
+  const volumes = Object.values(currency.volumesMap || {});
+  const highs = closePrices.slice();
+  const lows = closePrices.slice();
 
-  const labels = Object.keys(currency.pricesMap);
-  const data = Object.values(currency.pricesMap);
+  const ma = calcSMA(closePrices, 20);
+  const ema = calcEMA(closePrices, 20);
+  const boll = calcBoll(closePrices, 20, 2);
+  const sar = calcParabolicSAR(highs, lows, 0.02, 0.2);
+  const mavol = calcSMA(volumes, 20);
+  const macd = calcMACD(closePrices, 12, 26, 9);
+  const kdj = calcKDJ(highs, lows, closePrices, 9);
+  const rsi = calcRSI(closePrices, 14);
+  const wr = calcWilliamsR(highs, lows, closePrices, 14);
+  const stochRsi = calcStochRSI(rsi, 14, 3, 3);
 
-  new Chart(ctx, {
+  const mainCtx = document.getElementById('chart-' + currency.name).getContext('2d');
+  new Chart(mainCtx, {
     type: 'line',
     data: {
       labels: labels,
-      datasets: [{
-        label: `Курс ${currency.name}`,
-        data: data,
-        borderColor: getRandomColor(),
-        borderWidth: 2,
-        fill: false,
-        pointRadius: 0
-      }]
+      datasets: [
+        {
+          label: `Курс ${currency.name}`,
+          data: closePrices,
+          borderColor: '#2c3e50',
+          borderWidth: 2,
+          fill: false,
+          pointRadius: 0
+        },
+        {
+          label: 'MA(20)',
+          data: ma,
+          borderColor: '#3498db',
+          borderWidth: 1.5,
+          pointRadius: 0
+        },
+        {
+          label: 'EMA(20)',
+          data: ema,
+          borderColor: '#8e44ad',
+          borderWidth: 1.5,
+          pointRadius: 0
+        },
+        {
+          label: 'BOLL Upper',
+          data: boll.upper,
+          borderColor: '#16a085',
+          borderWidth: 1,
+          pointRadius: 0
+        },
+        {
+          label: 'BOLL Lower',
+          data: boll.lower,
+          borderColor: '#16a085',
+          borderWidth: 1,
+          pointRadius: 0
+        },
+        {
+          label: 'SAR',
+          data: sar,
+          borderColor: '#e67e22',
+          borderWidth: 0,
+          showLine: false,
+          pointRadius: 2
+        }
+      ]
     },
     options: {
+      maintainAspectRatio: false,
       scales: {
         x: {
           type: 'time',
           time: {
             unit: 'minute',
-            tooltipFormat: 'YYYY-MM-DD HH:mm'
+            tooltipFormat: 'yyyy-MM-dd HH:mm'
           }
         },
         y: {
@@ -72,13 +135,360 @@
     }
   });
 
-  function getRandomColor() {
-    const letters = '0123456789ABCDEF';
-    let color = '#';
-    for (let i = 0; i < 6; i++) {
-      color += letters[Math.floor(Math.random() * 16)];
+  const macdCtx = document.getElementById('macd-chart-' + currency.name).getContext('2d');
+  new Chart(macdCtx, {
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          type: 'line',
+          label: 'MACD',
+          data: macd.macd,
+          borderColor: '#2980b9',
+          borderWidth: 1.5,
+          pointRadius: 0
+        },
+        {
+          type: 'line',
+          label: 'Signal',
+          data: macd.signal,
+          borderColor: '#c0392b',
+          borderWidth: 1.2,
+          pointRadius: 0
+        },
+        {
+          type: 'bar',
+          label: 'Histogram',
+          data: macd.histogram,
+          backgroundColor: macd.histogram.map(v => (v || 0) >= 0 ? 'rgba(39, 174, 96, 0.55)' : 'rgba(231, 76, 60, 0.55)'),
+          borderWidth: 0
+        }
+      ]
+    },
+    options: {
+      maintainAspectRatio: false,
+      scales: {
+        x: {display: false},
+        y: {beginAtZero: true}
+      }
     }
-    return color;
+  });
+
+  const oscCtx = document.getElementById('osc-chart-' + currency.name).getContext('2d');
+  new Chart(oscCtx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [
+        {label: 'RSI', data: rsi, borderColor: '#2c3e50', pointRadius: 0, borderWidth: 1.2},
+        {label: 'WR', data: wr, borderColor: '#7f8c8d', pointRadius: 0, borderWidth: 1.2},
+        {label: 'StochRSI %K', data: stochRsi.k, borderColor: '#27ae60', pointRadius: 0, borderWidth: 1.2},
+        {label: 'StochRSI %D', data: stochRsi.d, borderColor: '#f39c12', pointRadius: 0, borderWidth: 1.2},
+        {label: 'K', data: kdj.k, borderColor: '#8e44ad', pointRadius: 0, borderWidth: 1.2},
+        {label: 'D', data: kdj.d, borderColor: '#d35400', pointRadius: 0, borderWidth: 1.2},
+        {label: 'J', data: kdj.j, borderColor: '#e74c3c', pointRadius: 0, borderWidth: 1.2}
+      ]
+    },
+    options: {
+      maintainAspectRatio: false,
+      scales: {
+        x: {display: false},
+        y: {beginAtZero: false}
+      }
+    }
+  });
+
+  renderMetricCards(currency.name, {
+    MA: lastDefined(ma),
+    EMA: lastDefined(ema),
+    BOLL: [lastDefined(boll.lower), lastDefined(boll.middle), lastDefined(boll.upper)],
+    SAR: lastDefined(sar),
+    MAVOL: lastDefined(mavol),
+    MACD: [lastDefined(macd.macd), lastDefined(macd.signal), lastDefined(macd.histogram)],
+    KDJ: [lastDefined(kdj.k), lastDefined(kdj.d), lastDefined(kdj.j)],
+    RSI: lastDefined(rsi),
+    WR: lastDefined(wr),
+    StochRSI: [lastDefined(stochRsi.k), lastDefined(stochRsi.d)]
+  });
+
+  function calcSMA(values, period) {
+    const out = Array(values.length).fill(null);
+    for (let i = period - 1; i < values.length; i++) {
+      let sum = 0;
+      for (let j = i - period + 1; j <= i; j++) {
+        sum += values[j];
+      }
+      out[i] = sum / period;
+    }
+    return out;
+  }
+
+  function calcEMA(values, period) {
+    const out = Array(values.length).fill(null);
+    if (values.length < period) {
+      return out;
+    }
+    const alpha = 2 / (period + 1);
+    let seed = 0;
+    for (let i = 0; i < period; i++) {
+      seed += values[i];
+    }
+    out[period - 1] = seed / period;
+    for (let i = period; i < values.length; i++) {
+      out[i] = alpha * values[i] + (1 - alpha) * out[i - 1];
+    }
+    return out;
+  }
+
+  function calcStd(values, start, end) {
+    const size = end - start + 1;
+    if (size <= 1) {
+      return 0;
+    }
+    let mean = 0;
+    for (let i = start; i <= end; i++) {
+      mean += values[i];
+    }
+    mean /= size;
+    let variance = 0;
+    for (let i = start; i <= end; i++) {
+      variance += Math.pow(values[i] - mean, 2);
+    }
+    return Math.sqrt(variance / size);
+  }
+
+  function calcBoll(values, period, k) {
+    const middle = calcSMA(values, period);
+    const upper = Array(values.length).fill(null);
+    const lower = Array(values.length).fill(null);
+    for (let i = period - 1; i < values.length; i++) {
+      const std = calcStd(values, i - period + 1, i);
+      upper[i] = middle[i] + k * std;
+      lower[i] = middle[i] - k * std;
+    }
+    return {upper, middle, lower};
+  }
+
+  function calcParabolicSAR(highs, lows, step, maxStep) {
+    const out = Array(highs.length).fill(null);
+    if (highs.length < 2) {
+      return out;
+    }
+    let upTrend = highs[1] >= highs[0];
+    let af = step;
+    let ep = upTrend ? highs[1] : lows[1];
+    let sar = upTrend ? lows[0] : highs[0];
+    out[1] = sar;
+
+    for (let i = 2; i < highs.length; i++) {
+      sar = sar + af * (ep - sar);
+      if (upTrend) {
+        if (lows[i] < sar) {
+          upTrend = false;
+          sar = ep;
+          ep = lows[i];
+          af = step;
+        } else if (highs[i] > ep) {
+          ep = highs[i];
+          af = Math.min(af + step, maxStep);
+        }
+      } else if (highs[i] > sar) {
+        upTrend = true;
+        sar = ep;
+        ep = highs[i];
+        af = step;
+      } else if (lows[i] < ep) {
+        ep = lows[i];
+        af = Math.min(af + step, maxStep);
+      }
+      out[i] = sar;
+    }
+    return out;
+  }
+
+  function calcMACD(values, shortPeriod, longPeriod, signalPeriod) {
+    const shortEma = calcEMA(values, shortPeriod);
+    const longEma = calcEMA(values, longPeriod);
+    const macdLine = values.map((_, idx) => (
+      shortEma[idx] !== null && longEma[idx] !== null ? shortEma[idx] - longEma[idx] : null
+    ));
+    const signal = calcEMAOnNullable(macdLine, signalPeriod);
+    const histogram = macdLine.map((val, idx) => (
+      val !== null && signal[idx] !== null ? val - signal[idx] : null
+    ));
+    return {macd: macdLine, signal, histogram};
+  }
+
+  function calcEMAOnNullable(values, period) {
+    const out = Array(values.length).fill(null);
+    const valid = values
+      .map((v, i) => ({v, i}))
+      .filter(({v}) => v !== null);
+    if (valid.length < period) {
+      return out;
+    }
+    const alpha = 2 / (period + 1);
+    let sum = 0;
+    for (let i = 0; i < period; i++) {
+      sum += valid[i].v;
+    }
+    out[valid[period - 1].i] = sum / period;
+    for (let i = period; i < valid.length; i++) {
+      const prevIdx = valid[i - 1].i;
+      const idx = valid[i].i;
+      const prev = out[prevIdx] !== null ? out[prevIdx] : valid[i - 1].v;
+      out[idx] = alpha * valid[i].v + (1 - alpha) * prev;
+    }
+    return out;
+  }
+
+  function calcKDJ(highs, lows, closes, period) {
+    const k = Array(closes.length).fill(null);
+    const d = Array(closes.length).fill(null);
+    const j = Array(closes.length).fill(null);
+    let prevK = 50;
+    let prevD = 50;
+    for (let i = 0; i < closes.length; i++) {
+      if (i < period - 1) {
+        continue;
+      }
+      const hh = Math.max(...highs.slice(i - period + 1, i + 1));
+      const ll = Math.min(...lows.slice(i - period + 1, i + 1));
+      const rsv = hh === ll ? 50 : ((closes[i] - ll) / (hh - ll)) * 100;
+      prevK = (2 / 3) * prevK + (1 / 3) * rsv;
+      prevD = (2 / 3) * prevD + (1 / 3) * prevK;
+      k[i] = prevK;
+      d[i] = prevD;
+      j[i] = 3 * prevK - 2 * prevD;
+    }
+    return {k, d, j};
+  }
+
+  function calcRSI(values, period) {
+    const out = Array(values.length).fill(null);
+    if (values.length <= period) {
+      return out;
+    }
+    let gain = 0;
+    let loss = 0;
+    for (let i = 1; i <= period; i++) {
+      const delta = values[i] - values[i - 1];
+      gain += Math.max(delta, 0);
+      loss += Math.max(-delta, 0);
+    }
+    let avgGain = gain / period;
+    let avgLoss = loss / period;
+    out[period] = calcRsiValue(avgGain, avgLoss);
+
+    for (let i = period + 1; i < values.length; i++) {
+      const delta = values[i] - values[i - 1];
+      const up = Math.max(delta, 0);
+      const down = Math.max(-delta, 0);
+      avgGain = ((period - 1) * avgGain + up) / period;
+      avgLoss = ((period - 1) * avgLoss + down) / period;
+      out[i] = calcRsiValue(avgGain, avgLoss);
+    }
+    return out;
+  }
+
+  function calcRsiValue(avgGain, avgLoss) {
+    if (avgLoss === 0) {
+      return 100;
+    }
+    const rs = avgGain / avgLoss;
+    return 100 - (100 / (1 + rs));
+  }
+
+  function calcWilliamsR(highs, lows, closes, period) {
+    const out = Array(closes.length).fill(null);
+    for (let i = period - 1; i < closes.length; i++) {
+      const hh = Math.max(...highs.slice(i - period + 1, i + 1));
+      const ll = Math.min(...lows.slice(i - period + 1, i + 1));
+      out[i] = hh === ll ? -50 : ((hh - closes[i]) / (hh - ll)) * -100;
+    }
+    return out;
+  }
+
+  function calcStochRSI(rsi, period, smoothK, smoothD) {
+    const raw = Array(rsi.length).fill(null);
+    for (let i = period - 1; i < rsi.length; i++) {
+      const window = rsi.slice(i - period + 1, i + 1).filter(v => v !== null);
+      if (window.length < period) {
+        continue;
+      }
+      const max = Math.max(...window);
+      const min = Math.min(...window);
+      raw[i] = max === min ? 0.5 : (rsi[i] - min) / (max - min);
+    }
+    const k = calcSMAOnNullable(raw, smoothK);
+    const d = calcSMAOnNullable(k, smoothD);
+    return {k, d};
+  }
+
+  function calcSMAOnNullable(values, period) {
+    const out = Array(values.length).fill(null);
+    for (let i = period - 1; i < values.length; i++) {
+      const window = values.slice(i - period + 1, i + 1);
+      if (window.some(v => v === null)) {
+        continue;
+      }
+      const sum = window.reduce((a, b) => a + b, 0);
+      out[i] = sum / period;
+    }
+    return out;
+  }
+
+  function lastDefined(values) {
+    if (!Array.isArray(values)) {
+      return values;
+    }
+    for (let i = values.length - 1; i >= 0; i--) {
+      if (values[i] !== null && values[i] !== undefined && !Number.isNaN(values[i])) {
+        return values[i];
+      }
+    }
+    return null;
+  }
+
+  function renderMetricCards(currencyName, metrics) {
+    const container = document.getElementById('metric-cards-' + currencyName);
+    const cards = [
+      ['MA', metrics.MA],
+      ['EMA', metrics.EMA],
+      ['BOLL (L/M/U)', metrics.BOLL],
+      ['SAR', metrics.SAR],
+      ['MAVOL', metrics.MAVOL],
+      ['MACD (M/S/H)', metrics.MACD],
+      ['KDJ (K/D/J)', metrics.KDJ],
+      ['RSI', metrics.RSI],
+      ['WR', metrics.WR],
+      ['StochRSI (%K/%D)', metrics.StochRSI]
+    ];
+    container.innerHTML = cards.map(([name, value]) => (
+      '<div class="indicator-card">' +
+      '<div class="indicator-name">' + name + '</div>' +
+      '<div class="indicator-value">' + formatMetric(value) + '</div>' +
+      '</div>'
+    )).join('');
+  }
+
+  function formatMetric(value) {
+    if (value === null || value === undefined) {
+      return 'n/a';
+    }
+    if (Array.isArray(value)) {
+      return value.map(formatNumber).join(' / ');
+    }
+    return formatNumber(value);
+  }
+
+  function formatNumber(value) {
+    if (value === null || value === undefined || Number.isNaN(value)) {
+      return 'n/a';
+    }
+    const abs = Math.abs(value);
+    const fractionDigits = abs >= 100 ? 2 : abs >= 1 ? 4 : 6;
+    return Number(value).toLocaleString('ru-RU', {maximumFractionDigits: fractionDigits});
   }
 </script>
 </body>
