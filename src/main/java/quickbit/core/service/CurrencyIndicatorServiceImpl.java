@@ -13,6 +13,7 @@ import java.util.Comparator;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,7 +44,7 @@ public class CurrencyIndicatorServiceImpl implements CurrencyIndicatorService {
             return new CurrencyIndicatorsModel().setLatest(new IndicatorLatestModel());
         }
 
-        List<CurrencyPrice> rawPrices = currencyService.getAllPrices(currency.getId());
+        Set<CurrencyPrice> rawPrices = currencyService.getAllPrices(currency.getId());
         List<CurrencyPrice> orderedPrices = rawPrices == null
             ? Collections.emptyList()
             : rawPrices
