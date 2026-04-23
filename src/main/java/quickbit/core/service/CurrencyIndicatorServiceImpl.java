@@ -10,6 +10,7 @@ import quickbit.dbcore.entity.CurrencyPrice;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -38,10 +39,27 @@ public class CurrencyIndicatorServiceImpl implements CurrencyIndicatorService {
 
     @Override
     public CurrencyIndicatorsModel calculateForCurrency(Currency currency) {
-        List<CurrencyPrice> orderedPrices = currencyService.getAllPrices(currency.getId())
+        if (currency == null || currency.getId() == null) {
+            return new CurrencyIndicatorsModel().setLatest(new IndicatorLatestModel());
+        }
+
+        List<CurrencyPrice> rawPrices = currencyService.getAllPrices(currency.getId());
+        List<CurrencyPrice> orderedPrices = rawPrices == null
+            ? Collections.emptyList()
+            : rawPrices
             .stream()
+            .filter(Objects::nonNull)
+            .filter(price -> price.getCreatedAt() != null && price.getPrice() != null)
             .sorted(Comparator.comparing(CurrencyPrice::getCreatedAt))
             .collect(Collectors.toList());
+
+        if (orderedPrices.isEmpty()) {
+            return new CurrencyIndicatorsModel().setLatest(new IndicatorLatestModel()
+                .setBoll(Collections.emptyList())
+                .setMacd(Collections.emptyList())
+                .setKdj(Collections.emptyList())
+                .setStochRsi(Collections.emptyList()));
+        }
 
         List<String> labels = orderedPrices.stream()
             .map(price -> price.getCreatedAt().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
@@ -76,14 +94,14 @@ public class CurrencyIndicatorServiceImpl implements CurrencyIndicatorService {
         IndicatorLatestModel latest = new IndicatorLatestModel()
             .setMa(lastDefined(ma))
             .setEma(lastDefined(ema))
-            .setBoll(List.of(lastDefined(boll.lower), lastDefined(boll.middle), lastDefined(boll.upper)))
+            .setBoll(nullableTriplet(lastDefined(boll.lower), lastDefined(boll.middle), lastDefined(boll.upper)))
             .setSar(lastDefined(sar))
             .setMavol(lastDefined(mavol))
-            .setMacd(List.of(lastDefined(macd.macd), lastDefined(macd.signal), lastDefined(macd.histogram)))
-            .setKdj(List.of(lastDefined(kdj.k), lastDefined(kdj.d), lastDefined(kdj.j)))
+            .setMacd(nullableTriplet(lastDefined(macd.macd), lastDefined(macd.signal), lastDefined(macd.histogram)))
+            .setKdj(nullableTriplet(lastDefined(kdj.k), lastDefined(kdj.d), lastDefined(kdj.j)))
             .setRsi(lastDefined(rsi))
             .setWr(lastDefined(wr))
-            .setStochRsi(List.of(lastDefined(stochRsi.k), lastDefined(stochRsi.d)));
+            .setStochRsi(nullablePair(lastDefined(stochRsi.k), lastDefined(stochRsi.d)));
 
         return new CurrencyIndicatorsModel()
             .setLabels(labels)
@@ -354,13 +372,31 @@ public class CurrencyIndicatorServiceImpl implements CurrencyIndicatorService {
     }
 
     private Double lastDefined(List<Double> values) {
+        if (values == null || values.isEmpty()) {
+            return null;
+        }
         for (int i = values.size() - 1; i >= 0; i--) {
             Double value = values.get(i);
-            if (value != null && !value.isNaN()) {
+            if (value != null && !value.isNaN() && !value.isInfinite()) {
                 return value;
             }
         }
         return null;
+    }
+
+    private List<Double> nullablePair(Double first, Double second) {
+        List<Double> values = new ArrayList<>(2);
+        values.add(first);
+        values.add(second);
+        return values;
+    }
+
+    private List<Double> nullableTriplet(Double first, Double second, Double third) {
+        List<Double> values = new ArrayList<>(3);
+        values.add(first);
+        values.add(second);
+        values.add(third);
+        return values;
     }
 
     private double max(List<Double> values, int from, int to) {
