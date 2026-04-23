@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import quickbit.core.model.AuthUser;
 import quickbit.core.model.assembler.CurrencyModelAssembler;
+import quickbit.core.service.CurrencyIndicatorService;
 import quickbit.core.service.CurrencyService;
 import quickbit.dbcore.entity.Currency;
 
@@ -22,14 +23,17 @@ import java.math.RoundingMode;
 public class CurrencyController {
 
     private final CurrencyService currencyService;
+    private final CurrencyIndicatorService currencyIndicatorService;
     private final CurrencyModelAssembler currencyModelAssembler;
 
     @Autowired
     public CurrencyController(
         CurrencyService currencyService,
+        CurrencyIndicatorService currencyIndicatorService,
         CurrencyModelAssembler currencyModelAssembler
     ) {
         this.currencyService = currencyService;
+        this.currencyIndicatorService = currencyIndicatorService;
         this.currencyModelAssembler = currencyModelAssembler;
     }
 
@@ -44,6 +48,7 @@ public class CurrencyController {
 
         return new ModelAndView("currency/info")
             .addObject("currencyModel", currencyModelAssembler.toModel(currency))
+            .addObject("indicators", currencyIndicatorService.calculateForCurrency(currency))
             .addObject("price", price.round(new MathContext(7, RoundingMode.HALF_UP)));
     }
 }
